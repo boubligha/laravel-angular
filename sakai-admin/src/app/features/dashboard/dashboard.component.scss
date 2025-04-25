@@ -1,0 +1,256 @@
+.dashboard-container {
+  padding: 1rem;
+}
+
+.dashboard-header {
+  margin-bottom: 2rem;
+  
+  h2 {
+    margin: 0;
+    font-weight: 600;
+    color: var(--text-color);
+  }
+  
+  .dashboard-date {
+    color: var(--text-color-secondary);
+    margin: 0.5rem 0 0;
+  }
+}
+
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  
+  .stats-card {
+    background-color: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    
+    .icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      margin-right: 1rem;
+      
+      &.primary {
+        background-color: rgba(33, 150, 243, 0.1);
+        color: var(--primary-color);
+      }
+      
+      &.success {
+        background-color: rgba(76, 175, 80, 0.1);
+        color: var(--success-color);
+      }
+      
+      &.warning {
+        background-color: rgba(255, 193, 7, 0.1);
+        color: var(--warning-color);
+      }
+      
+      &.danger {
+        background-color: rgba(244, 67, 54, 0.1);
+        color: var(--danger-color);
+      }
+      
+      i {
+        font-size: 1.5rem;
+      }
+    }
+    
+    .content {
+      .value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+        color: var(--text-color);
+      }
+      
+      .label {
+        color: var(--text-color-secondary);
+        font-size: 0.875rem;
+      }
+    }
+  }
+}
+
+.dashboard-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1.5rem;
+  
+  .dashboard-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      
+      h3 {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+      
+      .card-actions {
+        i {
+          cursor: pointer;
+          color: var(--text-color-secondary);
+          
+          &:hover {
+            color: var(--text-color);
+          }
+        }
+      }
+    }
+    
+    .card-body {
+      padding: 1.5rem;
+      flex: 1;
+    }
+  }
+}
+
+// Employee Status Card
+.employee-status {
+  .status-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.25rem;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    .status-label {
+      width: 80px;
+      font-size: 0.875rem;
+      color: var(--text-color);
+    }
+    
+    .status-bar {
+      flex: 1;
+      height: 8px;
+      background-color: #f1f1f1;
+      border-radius: 4px;
+      margin: 0 1rem;
+      overflow: hidden;
+      
+      .status-progress {
+        height: 100%;
+        background-color: var(--primary-color);
+        border-radius: 4px;
+        
+        &.bg-danger {
+          background-color: var(--danger-color);
+        }
+        
+        &.bg-warning {
+          background-color: var(--warning-color);
+        }
+        
+        &.bg-primary {
+          background-color: var(--primary-color);
+        }
+      }
+    }
+    
+    .status-value {
+      width: 40px;
+      text-align: right;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+  }
+}
+
+// Recent Activities Card
+.recent-activities {
+  .activity-item {
+    display: flex;
+    margin-bottom: 1.25rem;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    .activity-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      margin-right: 1rem;
+      
+      &.bg-success {
+        background-color: rgba(76, 175, 80, 0.1);
+        color: var(--success-color);
+      }
+      
+      &.bg-warning {
+        background-color: rgba(255, 193, 7, 0.1);
+        color: var(--warning-color);
+      }
+      
+      &.bg-primary {
+        background-color: rgba(33, 150, 243, 0.1);
+        color: var(--primary-color);
+      }
+      
+      &.bg-danger {
+        background-color: rgba(244, 67, 54, 0.1);
+        color: var(--danger-color);
+      }
+    }
+    
+    .activity-content {
+      flex: 1;
+      
+      .activity-title {
+        font-size: 0.9375rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.25rem;
+      }
+      
+      .activity-subtitle {
+        font-size: 0.875rem;
+        color: var(--text-color-secondary);
+        margin-bottom: 0.25rem;
+      }
+      
+      .activity-time {
+        font-size: 0.75rem;
+        color: var(--text-color-secondary);
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-stats {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+  
+  .dashboard-row {
+    grid-template-columns: 1fr;
+  }
+}

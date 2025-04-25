@@ -1,0 +1,102 @@
+<div class="employee-management">
+  <div class="page-header">
+    <div class="header-content">
+      <h1>Employee Management</h1>
+      <p>{{ employees.length }} Employees</p>
+    </div>
+    <div class="actions">
+      <div class="search-box">
+        <i class="pi pi-search"></i>
+        <input type="text" placeholder="Search employees..." [(ngModel)]="searchTerm" (input)="searchEmployees()">
+      </div>
+      <button class="btn btn-primary" (click)="openAddEmployeeDialog()">
+        <i class="pi pi-plus"></i>
+        <span>Add Employee</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="employee-grid">
+    @for (employee of filteredEmployees; track employee.id) {
+      <div class="employee-card">
+        <div class="employee-header">
+          <div class="employee-image" [class.online]="employee.status === 'online'">
+            <img [src]="employee.imageUrl || 'https://randomuser.me/api/portraits/' + (employee.id % 2 === 0 ? 'men' : 'women') + '/' + (employee.id * 3) + '.jpg'" [alt]="employee.name">
+          </div>
+          <div class="employee-info">
+            <h3>{{ employee.name }}</h3>
+            <p><i class="pi pi-briefcase"></i> {{ employee.position }}</p>
+          </div>
+          @if (employee.status && employee.status !== 'online') {
+            <div class="employee-status">
+              <span class="status-badge" 
+                    [class.absent]="employee.status === 'absent'"
+                    [class.on-leave]="employee.status === 'on-leave'"
+                    [class.half-day]="employee.status === 'half-day'">
+                {{ employee.status === 'on-leave' ? 'On leave' : 
+                   employee.status === 'half-day' ? 'Half day' : 
+                   employee.status }}
+              </span>
+            </div>
+          }
+        </div>
+
+        <div class="employee-contact">
+          <div>
+            <i class="pi pi-envelope"></i>
+            <span>{{ employee.email }}</span>
+          </div>
+          <div>
+            <i class="pi pi-phone"></i>
+            <span>{{ employee.phone }}</span>
+          </div>
+        </div>
+
+        @if (employee.status === 'absent' || employee.status === 'on-leave') {
+          <div class="leave-info">
+            <p>{{ employee.leaveType || 'Sick Leave' }}</p>
+          </div>
+        } @else if (employee.workHours) {
+          <div class="work-hours">
+            <div class="time-block">
+              <div class="time">{{ employee.workHours.inTime }}</div>
+              <div class="label">In time</div>
+            </div>
+            <div class="time-block">
+              <div class="time">{{ employee.workHours.outTime }}</div>
+              <div class="label">Out time</div>
+            </div>
+            <div class="time-block">
+              <div class="time">{{ employee.workHours.breakTime }}</div>
+              <div class="label">Break time</div>
+            </div>
+            <div class="time-block">
+              <div class="time">{{ employee.workHours.workHours }}</div>
+              <div class="label">Work hours</div>
+            </div>
+          </div>
+        }
+
+        <div class="employee-actions">
+          <button class="btn btn-sm" title="Edit Profile" (click)="openEditEmployeeDialog(employee)">
+            <i class="pi pi-user-edit"></i>
+          </button>
+          <button class="btn btn-sm" title="View Schedule">
+            <i class="pi pi-calendar"></i>
+          </button>
+          <button class="btn btn-sm btn-danger" title="Remove Employee" (click)="openDeleteConfirmationDialog(employee)">
+            <i class="pi pi-trash"></i>
+          </button>
+        </div>
+      </div>
+    }
+    
+    @if (filteredEmployees.length === 0) {
+      <div class="no-results">
+        <i class="pi pi-search"></i>
+        <h3>No employees found</h3>
+        <p>Try adjusting your search criteria</p>
+      </div>
+    }
+  </div>
+</div>

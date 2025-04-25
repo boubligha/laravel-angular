@@ -1,0 +1,143 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h2>Dashboard Overview</h2>
+    <p class="dashboard-date">Today: {{ getCurrentDate() }}</p>
+  </div>
+
+  <div class="dashboard-stats">
+    <div class="stats-card">
+      <div class="icon success">
+        <i class="pi pi-users"></i>
+      </div>
+      <div class="content">
+        <div class="value">24</div>
+        <div class="label">Total Employees</div>
+      </div>
+    </div>
+
+    <div class="stats-card">
+      <div class="icon primary">
+        <i class="pi pi-check-circle"></i>
+      </div>
+      <div class="content">
+        <div class="value">18</div>
+        <div class="label">Present Today</div>
+      </div>
+    </div>
+
+    <div class="stats-card">
+      <div class="icon warning">
+        <i class="pi pi-calendar-times"></i>
+      </div>
+      <div class="content">
+        <div class="value">3</div>
+        <div class="label">On Leave</div>
+      </div>
+    </div>
+
+    <div class="stats-card">
+      <div class="icon danger">
+        <i class="pi pi-clock"></i>
+      </div>
+      <div class="content">
+        <div class="value">2</div>
+        <div class="label">Late Arrivals</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-row">
+    <div class="dashboard-card employee-status">
+      <div class="card-header">
+        <h3>Employee Status</h3>
+        <div class="card-actions">
+          <i class="pi pi-ellipsis-v"></i>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="status-item">
+          <div class="status-label">Present</div>
+          <div class="status-bar">
+            <div class="status-progress" style="width: 75%;"></div>
+          </div>
+          <div class="status-value">75%</div>
+        </div>
+        <div class="status-item">
+          <div class="status-label">Absent</div>
+          <div class="status-bar">
+            <div class="status-progress bg-danger" style="width: 5%;"></div>
+          </div>
+          <div class="status-value">5%</div>
+        </div>
+        <div class="status-item">
+          <div class="status-label">On Leave</div>
+          <div class="status-bar">
+            <div class="status-progress bg-warning" style="width: 12%;"></div>
+          </div>
+          <div class="status-value">12%</div>
+        </div>
+        <div class="status-item">
+          <div class="status-label">Half Day</div>
+          <div class="status-bar">
+            <div class="status-progress bg-primary" style="width: 8%;"></div>
+          </div>
+          <div class="status-value">8%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-card recent-activities">
+      <div class="card-header">
+        <h3>Recent Activities</h3>
+        <div class="card-actions">
+          <i class="pi pi-ellipsis-v"></i>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="activity-item">
+          <div class="activity-icon bg-success">
+            <i class="pi pi-user-plus"></i>
+          </div>
+          <div class="activity-content">
+            <div class="activity-title">New Employee Added</div>
+            <div class="activity-subtitle">John Smith joined as Developer</div>
+            <div class="activity-time">2 hours ago</div>
+          </div>
+        </div>
+
+        <div class="activity-item">
+          <div class="activity-icon bg-warning">
+            <i class="pi pi-calendar"></i>
+          </div>
+          <div class="activity-content">
+            <div class="activity-title">Leave Request</div>
+            <div class="activity-subtitle">Sarah Johnson requested leave</div>
+            <div class="activity-time">3 hours ago</div>
+          </div>
+        </div>
+
+        <div class="activity-item">
+          <div class="activity-icon bg-primary">
+            <i class="pi pi-clock"></i>
+          </div>
+          <div class="activity-content">
+            <div class="activity-title">Work Hours Updated</div>
+            <div class="activity-subtitle">Michael Wang updated schedule</div>
+            <div class="activity-time">Yesterday</div>
+          </div>
+        </div>
+
+        <div class="activity-item">
+          <div class="activity-icon bg-danger">
+            <i class="pi pi-exclamation-circle"></i>
+          </div>
+          <div class="activity-content">
+            <div class="activity-title">Deadline Alert</div>
+            <div class="activity-subtitle">Project milestone due soon</div>
+            <div class="activity-time">Yesterday</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

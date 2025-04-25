@@ -1,0 +1,77 @@
+<div class="container">
+  <div class="left-side">
+      <h2>Welcome</h2>
+      <button class="register-btn" (click)="navigateToLogin()">Login</button>
+  </div>
+  <div class="form-box register">
+      <div class="scroll-view">
+          <form (ngSubmit)="register()">
+              <h1>Register</h1>
+              <div class="input-box">
+                  <input type="text" [(ngModel)]="firstName" #firstNameRef="ngModel" name="firstName" required>
+                  <label>First Name</label>
+                  <div *ngIf="firstNameRef.invalid && firstNameRef.touched" class="error">
+                      First name is required.
+                  </div>
+              </div>
+              <div class="input-box">
+                  <input type="text" [(ngModel)]="lastName" #lastNameRef="ngModel" name="lastName" required>
+                  <label>Last Name</label>
+                  <div *ngIf="lastNameRef.invalid && lastNameRef.touched" class="error">
+                      Last name is required.
+                  </div>
+              </div>
+              <div class="input-box">
+                  <input type="email" [(ngModel)]="email" #emailRef="ngModel" name="email" required>
+                  <label>Email</label>
+                  <div *ngIf="emailRef.invalid && emailRef.touched" class="error">
+                      Valid email is required.
+                  </div>
+              </div>
+              <div class="gender-selection">
+                  <label>
+                      <input type="radio" [(ngModel)]="gender" name="gender" value="male" required>
+                      Male
+                  </label>
+                  <label>
+                      <input type="radio" [(ngModel)]="gender" name="gender" value="female" required>
+                      Female
+                  </label>
+              </div>
+              <div class="input-box">
+                  <input type="password" [(ngModel)]="password" #passwordRef="ngModel" name="password" required minlength="6">
+                  <label>Password</label>
+                  <div *ngIf="passwordRef.invalid && passwordRef.touched" class="error">
+                      Password must be at least 6 characters.
+                  </div>
+              </div>
+              <div class="input-box">
+                  <input type="password" [(ngModel)]="confirmPassword" #confirmPasswordRef="ngModel" name="confirmPassword" required>
+                  <label>Confirm Password</label>
+                  <div *ngIf="confirmPasswordRef.invalid && confirmPasswordRef.touched" class="error">
+                      Confirm Password is required.
+                  </div>
+                  <div *ngIf="password !== confirmPassword && confirmPasswordRef.touched" class="error">
+                      Passwords don't match.
+                  </div>
+              </div>
+              <div *ngIf="registerError" class="error-message">
+                <small class="error">{{ registerError }}</small>
+              </div>
+              <div class="checkbox-container">
+                  <label>
+                      <input type="checkbox" [(ngModel)]="isConfirmed" name="isConfirmed" required>
+                      I confirm my registration
+                  </label>
+                  <div *ngIf="!isConfirmed" class="error">
+                      You must confirm registration.
+                  </div>
+              </div>
+              <button type="submit" class="btn">Register</button>
+              <div class="login-link">
+                  <a (click)="navigateToLogin()">Already have an account? Login</a>
+              </div>
+          </form>
+      </div>
+    </div>
+</div>

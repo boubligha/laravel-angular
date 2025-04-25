@@ -1,0 +1,280 @@
+.employee-management {
+  padding: 1.5rem;
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+
+    .header-content {
+      h1 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 600;
+      }
+
+      p {
+        margin: 0.25rem 0 0;
+        color: #6c757d;
+      }
+    }
+
+    .actions {
+      display: flex;
+      gap: 1rem;
+
+      .search-box {
+        position: relative;
+
+        i {
+          position: absolute;
+          left: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          color: #6c757d;
+        }
+
+        input {
+          padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+          border: 1px solid #dee2e6;
+          border-radius: 4px;
+          min-width: 240px;
+
+          &:focus {
+            outline: none;
+            border-color: #adb5bd;
+          }
+        }
+      }
+
+      .btn-primary {
+        background-color: #3B82F6;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 0.5rem 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #2563EB;
+        }
+      }
+    }
+  }
+
+  .employee-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+
+    .employee-card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+
+      .employee-header {
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        border-bottom: 1px solid #f0f0f0;
+        position: relative;
+
+        .employee-image {
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          overflow: hidden;
+          position: relative;
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+
+          &.online::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 10px;
+            height: 10px;
+            background: #22c55e;
+            border-radius: 50%;
+            border: 2px solid white;
+          }
+        }
+
+        .employee-info {
+          flex-grow: 1;
+
+          h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+          }
+
+          p {
+            margin: 0.25rem 0 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+          }
+        }
+
+        .employee-status {
+          position: absolute;
+          top: 0.5rem;
+          right: 0.5rem;
+
+          .status-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-weight: 500;
+            background-color: #f3f4f6;
+            color: #4b5563;
+
+            &.absent {
+              background-color: #fee2e2;
+              color: #dc2626;
+            }
+
+            &.on-leave {
+              background-color: #fef3c7;
+              color: #d97706;
+            }
+
+            &.half-day {
+              background-color: #dbeafe;
+              color: #2563eb;
+            }
+          }
+        }
+      }
+
+      .employee-contact {
+        padding: 0.75rem 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        border-bottom: 1px solid #f0f0f0;
+
+        div {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 0.9rem;
+          color: #4b5563;
+
+          i {
+            color: #6c757d;
+            font-size: 0.85rem;
+          }
+        }
+      }
+
+      .leave-info {
+        padding: 0.75rem 1rem;
+        background-color: #fef3c7;
+        color: #92400e;
+        font-size: 0.9rem;
+
+        p {
+          margin: 0;
+        }
+      }
+
+      .work-hours {
+        padding: 0.75rem 1rem;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.5rem;
+        background-color: #f9fafb;
+
+        .time-block {
+          text-align: center;
+
+          .time {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #111827;
+          }
+
+          .label {
+            font-size: 0.75rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+          }
+        }
+      }
+
+      .employee-actions {
+        padding: 0.75rem 1rem;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+
+        .btn-sm {
+          width: 32px;
+          height: 32px;
+          border-radius: 4px;
+          border: 1px solid #dee2e6;
+          background-color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #6c757d;
+          cursor: pointer;
+
+          &:hover {
+            background-color: #f8f9fa;
+            color: #212529;
+          }
+
+          &.btn-danger {
+            color: #dc3545;
+
+            &:hover {
+              background-color: #dc3545;
+              color: white;
+              border-color: #dc3545;
+            }
+          }
+        }
+      }
+    }
+
+    .no-results {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 3rem 0;
+
+      i {
+        font-size: 2.5rem;
+        color: #d1d5db;
+        margin-bottom: 1rem;
+      }
+
+      h3 {
+        margin: 0 0 0.5rem;
+        color: #374151;
+      }
+
+      p {
+        margin: 0;
+        color: #6b7280;
+      }
+    }
+  }
+}

@@ -1,0 +1,44 @@
+<div class="container">
+    <div class="left-side">
+        <h2>Hello, Welcome!</h2>
+        <button class="register-btn" (click)="navigateToRegister()">Register</button>
+    </div>
+    <div class="form-box login">
+        <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+            <h1>Login</h1>
+            <div class="input-box">
+                <input type="email" name="email" [(ngModel)]="email" required>
+                <label>Email</label>
+                <i class="bx bxs-envelope"></i>
+                <div *ngIf="loginForm.submitted && loginForm.controls['email']?.invalid">
+                    <small class="error">Email is required and should be valid.</small>
+                </div>
+            </div>
+            <div class="input-box">
+                <input type="password" name="password" [(ngModel)]="password" required>
+                <label>Password</label>
+                <i class="bx bxs-lock-alt"></i>
+                <div *ngIf="loginForm.submitted && loginForm.controls['password']?.invalid">
+                    <small class="error">Password is required.</small>
+                </div>
+            </div>
+            <div *ngIf="loginError" class="error-message">
+                <small class="error">{{ loginError }}</small>
+            </div>
+            <div class="forgot-pass">
+                <a href="#">Forgot your password?</a>
+            </div>
+            <button type="submit" class="btn">Login</button>
+            <p>or Login with Social Platforms</p>
+            <div class="social-icons">
+                <a href="#"><i class="pi pi-google"></i></a>
+                <a href="#"><i class="pi pi-facebook"></i></a>
+                <a href="#"><i class="pi pi-github"></i></a>
+                <a href="#"><i class="pi pi-linkedin"></i></a>
+            </div>
+            <div class="signup-link">
+                <a (click)="navigateToRegister()">Signup</a>
+            </div>
+        </form>
+    </div>
+</div>
