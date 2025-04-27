@@ -1,0 +1,257 @@
+<div class="grid p-3">
+    <div class="col-12">
+        <div class="card">
+            <div *ngIf="loading" class="flex justify-content-center">
+                <p-progressSpinner></p-progressSpinner>
+            </div>
+
+            <div *ngIf="!loading" class="project-detail">
+                <!-- Header with back button and title -->
+                <div class="flex align-items-center justify-content-between mb-4">
+                    <div class="flex align-items-center">
+                        <button pButton pRipple icon="pi pi-arrow-left" class="p-button-rounded p-button-text mr-2" 
+                                (click)="navigateBack()"></button>
+                        <h2 class="m-0">{{ project?.name }}</h2>
+                    </div>
+                    <div>
+                        <button pButton pRipple label="Save Changes" icon="pi pi-save" class="p-button-primary mr-2" 
+                                (click)="onSaveProject()"></button>
+                        <button pButton pRipple label="Delete Project" icon="pi pi-trash" class="p-button-danger" 
+                                (click)="onDeleteProject()"></button>
+                    </div>
+                </div>
+
+                <!-- Status badges -->
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <p-tag [severity]="getStatusSeverity(project?.status)" [value]="project?.status"></p-tag>
+                    <p-tag [severity]="getSeverity(project?.priority)" [value]="project?.priority"></p-tag>
+                    <p-tag *ngIf="project?.progress === 100" severity="success" value="Completed"></p-tag>
+                </div>
+
+                <!-- Tabs for different project sections -->
+                <p-tabView [(activeIndex)]="activeTabIndex">
+                    <!-- General Info Tab -->
+                    <p-tabPanel header="General Info">
+                        <div class="formgrid grid">
+                            <div class="field col-12 md:col-6">
+                                <label for="name">Project Name*</label>
+                                <input pInputText id="name" type="text" class="w-full" 
+                                       [formControl]="projectForm.controls['name']" />
+                                <small *ngIf="projectForm.controls['name'].invalid && projectForm.controls['name'].touched" 
+                                       class="p-error">Project name is required.</small>
+                            </div>
+
+                            <div class="field col-12 md:col-6">
+                                <label for="status">Status</label>
+                                <p-dropdown id="status" [options]="statusOptions" optionLabel="label" optionValue="value"
+                                            [formControl]="projectForm.controls['status']" placeholder="Select Status" 
+                                            [showClear]="false" styleClass="w-full"></p-dropdown>
+                            </div>
+
+                            <div class="field col-12 md:col-6">
+                                <label for="startDate">Start Date</label>
+                                <p-calendar id="startDate" [formControl]="projectForm.controls['startDate']" 
+                                           [showIcon]="true" dateFormat="yy-mm-dd" styleClass="w-full"></p-calendar>
+                            </div>
+
+                            <div class="field col-12 md:col-6">
+                                <label for="deadline">Deadline</label>
+                                <p-calendar id="deadline" [formControl]="projectForm.controls['deadline']" 
+                                           [showIcon]="true" dateFormat="yy-mm-dd" styleClass="w-full"></p-calendar>
+                            </div>
+
+                            <div class="field col-12 md:col-6">
+                                <label for="priority">Priority</label>
+                                <p-dropdown id="priority" [options]="priorityOptions" optionLabel="label" optionValue="value"
+                                            [formControl]="projectForm.controls['priority']" placeholder="Select Priority" 
+                                            [showClear]="false" styleClass="w-full"></p-dropdown>
+                            </div>
+
+                            <div class="field col-12 md:col-6">
+                                <label for="progress">Progress</label>
+                                <div class="flex align-items-center">
+                                    <p-slider [formControl]="projectForm.controls['progress']" styleClass="w-full mr-2"></p-slider>
+                                    <span>{{ projectForm.controls['progress'].value }}%</span>
+                                </div>
+                            </div>
+
+                            <div class="field col-12">
+                                <label for="description">Description</label>
+                                <textarea pInputTextarea id="description" [formControl]="projectForm.controls['description']" 
+                                          rows="5" class="w-full"></textarea>
+                            </div>
+                        </div>
+                    </p-tabPanel>
+
+                    <!-- Team Tab -->
+                    <p-tabPanel header="Team">
+                        <div class="formgrid grid">
+                            <div class="field col-12 md:col-6">
+                                <label for="pm">Project Manager</label>
+                                <p-dropdown id="pm" [options]="managerOptions" optionLabel="label" [formControl]="projectForm.controls['pm']" 
+                                            placeholder="Select Project Manager" styleClass="w-full"></p-dropdown>
+                            </div>
+
+                            <div class="field col-12 md:col-6">
+                                <label for="tl">Team Lead</label>
+                                <p-dropdown id="tl" [options]="teamLeadOptions" optionLabel="label" [formControl]="projectForm.controls['tl']" 
+                                            placeholder="Select Team Lead" styleClass="w-full"></p-dropdown>
+                            </div>
+
+                            <div class="field col-12">
+                                <label for="team">Team Members</label>
+                                <p-multiSelect id="team" [options]="teamMemberOptions" optionLabel="label" 
+                                                [formControl]="projectForm.controls['team']" 
+                                                placeholder="Select Team Members" [filter]="true" styleClass="w-full"></p-multiSelect>
+                            </div>
+                        </div>
+
+                        <!-- Team Cards -->
+                        <div class="grid mt-3">
+                            <!-- Project Manager Card -->
+                            <div class="col-12 md:col-4" *ngIf="projectForm.controls['pm'].value">
+                                <p-card styleClass="team-card">
+                                    <ng-template pTemplate="header">
+                                        <div class="flex justify-content-center p-3 bg-primary">
+                                            <img [src]="projectForm.controls['pm'].value?.avatar || 'assets/images/avatar/default.png'" 
+                                                 alt="Project Manager" class="team-avatar" />
+                                        </div>
+                                    </ng-template>
+                                    <div class="text-center">
+                                        <h3 class="mb-1">{{ projectForm.controls['pm'].value?.name }}</h3>
+                                        <p class="text-secondary mb-2">Project Manager</p>
+                                        <div class="flex justify-content-center">
+                                            <button pButton pRipple icon="pi pi-envelope" class="p-button-rounded p-button-text"></button>
+                                            <button pButton pRipple icon="pi pi-phone" class="p-button-rounded p-button-text"></button>
+                                        </div>
+                                    </div>
+                                </p-card>
+                            </div>
+
+                            <!-- Team Lead Card -->
+                            <div class="col-12 md:col-4" *ngIf="projectForm.controls['tl'].value">
+                                <p-card styleClass="team-card">
+                                    <ng-template pTemplate="header">
+                                        <div class="flex justify-content-center p-3 bg-primary">
+                                            <img [src]="projectForm.controls['tl'].value?.avatar || 'assets/images/avatar/default.png'" 
+                                                 alt="Team Lead" class="team-avatar" />
+                                        </div>
+                                    </ng-template>
+                                    <div class="text-center">
+                                        <h3 class="mb-1">{{ projectForm.controls['tl'].value?.name }}</h3>
+                                        <p class="text-secondary mb-2">Team Lead</p>
+                                        <div class="flex justify-content-center">
+                                            <button pButton pRipple icon="pi pi-envelope" class="p-button-rounded p-button-text"></button>
+                                            <button pButton pRipple icon="pi pi-phone" class="p-button-rounded p-button-text"></button>
+                                        </div>
+                                    </div>
+                                </p-card>
+                            </div>
+                        </div>
+
+                        <!-- Team Members Grid -->
+                        <h3 class="mt-4 mb-3">Team Members</h3>
+                        <div class="grid">
+                            <div class="col-12 md:col-3" *ngFor="let member of projectForm.controls['team'].value">
+                                <p-card styleClass="member-card">
+                                    <div class="flex align-items-center">
+                                        <img [src]="member.value?.avatar || 'assets/images/avatar/default.png'" 
+                                             alt="Team Member" class="member-avatar mr-3" />
+                                        <div>
+                                            <h4 class="mb-1">{{ member.value?.name }}</h4>
+                                            <p class="text-secondary m-0">{{ member.value?.role }}</p>
+                                        </div>
+                                    </div>
+                                </p-card>
+                            </div>
+                        </div>
+                    </p-tabPanel>
+
+                    <!-- Tasks Tab -->
+                    <p-tabPanel header="Tasks">
+                        <div class="flex justify-content-between align-items-center mb-3">
+                            <h3 class="m-0">Project Tasks</h3>
+                            <button pButton pRipple label="Add Task" icon="pi pi-plus" class="p-button-sm"></button>
+                        </div>
+
+                        <p-table [value]="[]" styleClass="p-datatable-sm" [paginator]="true" [rows]="5" 
+                                 [rowsPerPageOptions]="[5, 10, 25]" [showCurrentPageReport]="true"
+                                 emptyMessage="No tasks found. Add a new task to get started.">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th style="width: 3rem">
+                                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                                    </th>
+                                    <th>Task Name</th>
+                                    <th style="width: 10rem">Assignee</th>
+                                    <th style="width: 8rem">Status</th>
+                                    <th style="width: 8rem">Due Date</th>
+                                    <th style="width: 8rem">Actions</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-task>
+                                <tr>
+                                    <td>
+                                        <p-tableCheckbox [value]="task"></p-tableCheckbox>
+                                    </td>
+                                    <td>{{ task?.name }}</td>
+                                    <td>{{ task?.assignee?.name }}</td>
+                                    <td>
+                                        <p-tag [severity]="getStatusSeverity(task?.status)" [value]="task?.status"></p-tag>
+                                    </td>
+                                    <td>{{ task?.dueDate | date:'shortDate' }}</td>
+                                    <td>
+                                        <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-text mr-1"></button>
+                                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger"></button>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </p-tabPanel>
+
+                    <!-- Files Tab -->
+                    <p-tabPanel header="Files">
+                        <div class="flex justify-content-between align-items-center mb-3">
+                            <h3 class="m-0">Project Files</h3>
+                            <button pButton pRipple label="Upload File" icon="pi pi-upload" class="p-button-sm"></button>
+                        </div>
+
+                        <p-table [value]="[]" styleClass="p-datatable-sm" [paginator]="true" [rows]="5" 
+                                [rowsPerPageOptions]="[5, 10, 25]" [showCurrentPageReport]="true"
+                                emptyMessage="No files found. Upload a file to get started.">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>File Name</th>
+                                    <th style="width: 10rem">Uploaded By</th>
+                                    <th style="width: 10rem">Size</th>
+                                    <th style="width: 12rem">Upload Date</th>
+                                    <th style="width: 8rem">Actions</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-file>
+                                <tr>
+                                    <td>
+                                        <div class="flex align-items-center">
+                                            <i class="pi pi-file mr-2"></i>
+                                            {{ file?.name }}
+                                        </div>
+                                    </td>
+                                    <td>{{ file?.uploadedBy }}</td>
+                                    <td>{{ file?.size }}</td>
+                                    <td>{{ file?.uploadDate | date }}</td>
+                                    <td>
+                                        <button pButton pRipple icon="pi pi-download" class="p-button-rounded p-button-text mr-1"></button>
+                                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger"></button>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </p-tabPanel>
+                </p-tabView>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-toast></p-toast>
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>

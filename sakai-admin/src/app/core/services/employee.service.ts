@@ -112,6 +112,18 @@ export class EmployeeService {
     return of(this.employees);
   }
 
+  getAllEmployees(): Observable<Employee[]> {
+    return this.getEmployees();
+  }
+
+  getEmployeeById(id: number): Observable<Employee> {
+    const employee = this.employees.find(e => e.id === id);
+    if (employee) {
+      return of(employee);
+    }
+    return of({} as Employee);
+  }
+
   addEmployee(employee: Employee): Observable<Employee> {
     employee.id = this.employees.length + 1;
     this.employees.push(employee);

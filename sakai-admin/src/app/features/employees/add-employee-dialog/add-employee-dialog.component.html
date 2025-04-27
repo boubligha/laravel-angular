@@ -3,6 +3,9 @@
   
   <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
     <mat-dialog-content class="dialog-content">
+      <!-- Personal Information Section -->
+      <h3 class="section-title">Personal Information</h3>
+      
       <div class="form-row">
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Full Name</mat-label>
@@ -13,12 +16,24 @@
         </mat-form-field>
       </div>
       
-      <div class="form-row">
-        <mat-form-field appearance="outline" class="full-width">
+      <div class="form-row two-columns">
+        <mat-form-field appearance="outline">
           <mat-label>Position</mat-label>
           <input matInput formControlName="position" placeholder="Software Engineer">
           <mat-error *ngIf="employeeForm.get('position')?.hasError('required')">
             Position is required
+          </mat-error>
+        </mat-form-field>
+        
+        <mat-form-field appearance="outline">
+          <mat-label>Salary</mat-label>
+          <input matInput formControlName="salary" type="number" placeholder="0.00">
+          <span matPrefix>$&nbsp;</span>
+          <mat-error *ngIf="employeeForm.get('salary')?.hasError('required')">
+            Salary is required
+          </mat-error>
+          <mat-error *ngIf="employeeForm.get('salary')?.hasError('min')">
+            Salary must be a positive number
           </mat-error>
         </mat-form-field>
       </div>
@@ -55,10 +70,72 @@
           </mat-select>
         </mat-form-field>
         
-        <mat-form-field appearance="outline">
-          <mat-label>Image URL (Optional)</mat-label>
-          <input matInput formControlName="imageUrl" placeholder="https://example.com/avatar.jpg">
-        </mat-form-field>
+        <div class="image-upload-container">
+          <div class="image-preview" *ngIf="previewImageUrl" [style.backgroundImage]="'url(' + previewImageUrl + ')'"></div>
+          <div class="image-placeholder" *ngIf="!previewImageUrl" (click)="triggerFileInput()">
+            <mat-icon>add_photo_alternate</mat-icon>
+            <span>Upload Image</span>
+          </div>
+          <input #fileInput type="file" accept="image/*" style="display: none" (change)="onFileSelected($event)">
+          <button mat-stroked-button type="button" (click)="triggerFileInput()" class="upload-button">
+            {{ previewImageUrl ? 'Change Image' : 'Upload Image' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Work Schedule Section -->
+      <h3 class="section-title">Work Schedule</h3>
+      
+      <div formGroupName="workHours">
+        <div class="form-row two-columns">
+          <mat-form-field appearance="outline">
+            <mat-label>In Time</mat-label>
+            <input matInput formControlName="inTime" placeholder="9:00 AM">
+            <mat-error *ngIf="employeeForm.get('workHours.inTime')?.hasError('required')">
+              In time is required
+            </mat-error>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline">
+            <mat-label>Out Time</mat-label>
+            <input matInput formControlName="outTime" placeholder="5:00 PM">
+            <mat-error *ngIf="employeeForm.get('workHours.outTime')?.hasError('required')">
+              Out time is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+        
+        <div class="form-row two-columns">
+          <mat-form-field appearance="outline">
+            <mat-label>Break Time (hours)</mat-label>
+            <input matInput formControlName="breakTime" placeholder="01:00">
+            <mat-error *ngIf="employeeForm.get('workHours.breakTime')?.hasError('required')">
+              Break time is required
+            </mat-error>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline">
+            <mat-label>Work Hours (hours)</mat-label>
+            <input matInput formControlName="workHours" placeholder="07:00">
+            <mat-error *ngIf="employeeForm.get('workHours.workHours')?.hasError('required')">
+              Work hours is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="days-off-container">
+          <label class="days-label">Days Off:</label>
+          <div class="days-chips">
+            <div *ngFor="let day of daysOfWeek" 
+                 class="day-chip" 
+                 [class.selected]="isDaySelected(day)"
+                 (click)="toggleDayOff(day)">
+              {{ day }}
+            </div>
+          </div>
+        </div>
       </div>
     </mat-dialog-content>
     

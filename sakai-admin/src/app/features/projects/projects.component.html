@@ -1,0 +1,115 @@
+<div class="projects-management">
+  <p-toast></p-toast>
+  
+  <div class="page-header">
+    <div class="header-content">
+      <h1>Projects</h1>
+      <p>{{ projects.length }} Projects</p>
+    </div>
+    <div class="actions">
+      <div class="search-box">
+        <i class="pi pi-search"></i>
+        <input type="text" placeholder="Search projects..." [(ngModel)]="searchTerm" (input)="searchProjects()">
+      </div>
+      <button class="btn btn-primary" (click)="onAddProject()">
+        <i class="pi pi-plus"></i>
+        <span>Add Project</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="project-table-container">
+    <p-table [value]="filteredProjects" [tableStyle]="{'min-width': '60rem'}" styleClass="clickable-rows">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="name">Project Name <p-sortIcon field="name"></p-sortIcon></th>
+          <th pSortableColumn="startDate">Start Date <p-sortIcon field="startDate"></p-sortIcon></th>
+          <th pSortableColumn="deadline">Deadline <p-sortIcon field="deadline"></p-sortIcon></th>
+          <th pSortableColumn="priority">Priority <p-sortIcon field="priority"></p-sortIcon></th>
+          <th>PM</th>
+          <th>TL</th>
+          <th>Team</th>
+          <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
+          <th pSortableColumn="progress">Progress <p-sortIcon field="progress"></p-sortIcon></th>
+          <th style="width: 120px;">Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-project>
+        <tr (click)="onRowClick(project)" class="project-row">
+          <td>{{ project.name }}</td>
+          <td>{{ project.startDate }}</td>
+          <td>{{ project.deadline }}</td>
+          <td>
+            <p-tag [value]="project.priority" [severity]="getSeverity(project.priority)"></p-tag>
+          </td>
+          <td>
+            <div class="person-avatar" [pTooltip]="project.pm.name" tooltipPosition="bottom">
+              <p-avatar [image]="project.pm.avatar" styleClass="mr-2" size="normal" shape="circle"></p-avatar>
+            </div>
+          </td>
+          <td>
+            <div class="person-avatar" [pTooltip]="project.tl.name" tooltipPosition="bottom">
+              <p-avatar [image]="project.tl.avatar" styleClass="mr-2" size="normal" shape="circle"></p-avatar>
+            </div>
+          </td>
+          <td>
+            <div class="team-avatars" [pTooltip]="getTeamTooltip(project.team)" tooltipPosition="bottom">
+              <p-avatarGroup>
+                <p-avatar *ngFor="let member of project.team.slice(0, 4)" 
+                          [image]="member.avatar" 
+                          size="normal" 
+                          shape="circle">
+                </p-avatar>
+                <p-avatar *ngIf="project.team.length > 4" 
+                          label="+{{project.team.length - 4}}" 
+                          size="normal" 
+                          shape="circle" 
+                          [style]="{'background-color':'#2196F3', 'color': '#ffffff'}">
+                </p-avatar>
+              </p-avatarGroup>
+            </div>
+          </td>
+          <td>
+            <p-tag [value]="project.status" [severity]="getStatusSeverity(project.status)"></p-tag>
+          </td>
+          <td>
+            <div class="progress-container">
+              <p-progressBar [value]="project.progress" [showValue]="false" [style]="{'height': '8px'}"></p-progressBar>
+              <span>{{ project.progress }}%</span>
+            </div>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button pButton icon="pi pi-eye" class="p-button-rounded p-button-info p-button-outlined"
+                      pTooltip="View Details" tooltipPosition="bottom"
+                      (click)="onViewProject($event, project)"></button>
+              <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-outlined"
+                      pTooltip="Delete Project" tooltipPosition="bottom"
+                      (click)="onDeleteProject($event, project)"></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="10" class="empty-message">
+            <div>
+              <i class="pi pi-search"></i>
+              <h3>No projects found</h3>
+              <p>Try adjusting your search criteria</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+  
+  <!-- Edit Project Dialog -->
+  <app-edit-project-dialog
+    [(visible)]="editDialogVisible"
+    [project]="selectedProject">
+  </app-edit-project-dialog>
+  
+  <!-- Delete Project Dialog -->
+  <app-delete-project-dialog #deleteDialog [(visible)]="deleteDialogVisible"></app-delete-project-dialog>
+</div>

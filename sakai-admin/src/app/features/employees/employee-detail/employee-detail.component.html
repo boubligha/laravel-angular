@@ -1,0 +1,181 @@
+<div class="detail-container" *ngIf="!isLoading && employee; else loadingTemplate">
+  <div class="header-actions">
+    <button mat-icon-button color="primary" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="actions">
+      <button mat-raised-button color="primary" (click)="editEmployee()">
+        <mat-icon>edit</mat-icon>
+        Edit
+      </button>
+      <button mat-raised-button color="warn" (click)="deleteEmployee()">
+        <mat-icon>delete</mat-icon>
+        Delete
+      </button>
+    </div>
+  </div>
+
+  <div class="employee-profile">
+    <div class="profile-header">
+      <div class="profile-image" [style.backgroundImage]="employee.imageUrl ? 'url(' + employee.imageUrl + ')' : ''">
+        <div class="profile-placeholder" *ngIf="!employee.imageUrl">
+          <mat-icon>person</mat-icon>
+        </div>
+      </div>
+      <div class="profile-info">
+        <h2 class="employee-name">{{ employee.name }}</h2>
+        <p class="employee-position">{{ employee.position }}</p>
+        <div class="status-chip" [style.backgroundColor]="getStatusColor(employee.status)">
+          {{ employee.status }}
+        </div>
+      </div>
+    </div>
+
+    <mat-card class="salary-card">
+      <mat-card-content>
+        <div class="salary-amount">${{ employee.salary || 0 | number:'1.2-2' }}</div>
+        <div class="salary-label">Salary</div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <mat-tab-group animationDuration="0ms" class="detail-tabs">
+    <!-- Personal Information Tab -->
+    <mat-tab label="Personal Information">
+      <div class="tab-content">
+        <mat-list>
+          <mat-list-item>
+            <span matListItemTitle>Email</span>
+            <span matListItemLine>{{ employee.email }}</span>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+          
+          <mat-list-item>
+            <span matListItemTitle>Phone</span>
+            <span matListItemLine>{{ employee.phone }}</span>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+          
+          <mat-list-item>
+            <span matListItemTitle>Position</span>
+            <span matListItemLine>{{ employee.position }}</span>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+          
+          <mat-list-item>
+            <span matListItemTitle>Status</span>
+            <span matListItemLine>
+              <span class="status-indicator" [style.backgroundColor]="getStatusColor(employee.status)"></span>
+              {{ employee.status }}
+            </span>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+          
+          <mat-list-item *ngIf="employee.leaveType">
+            <span matListItemTitle>Leave Type</span>
+            <span matListItemLine>{{ employee.leaveType }}</span>
+          </mat-list-item>
+        </mat-list>
+      </div>
+    </mat-tab>
+    
+    <!-- Work Schedule Tab -->
+    <mat-tab label="Work Schedule">
+      <div class="tab-content">
+        <h3>Work Hours</h3>
+        <div class="work-hours-grid">
+          <div class="work-hour-card">
+            <mat-icon>login</mat-icon>
+            <div class="work-hour-label">In Time</div>
+            <div class="work-hour-value">{{ employee.workHours?.inTime || 'Not set' }}</div>
+          </div>
+          
+          <div class="work-hour-card">
+            <mat-icon>logout</mat-icon>
+            <div class="work-hour-label">Out Time</div>
+            <div class="work-hour-value">{{ employee.workHours?.outTime || 'Not set' }}</div>
+          </div>
+          
+          <div class="work-hour-card">
+            <mat-icon>free_breakfast</mat-icon>
+            <div class="work-hour-label">Break Time</div>
+            <div class="work-hour-value">{{ employee.workHours?.breakTime || 'Not set' }}</div>
+          </div>
+          
+          <div class="work-hour-card">
+            <mat-icon>schedule</mat-icon>
+            <div class="work-hour-label">Work Hours</div>
+            <div class="work-hour-value">{{ employee.workHours?.workHours || 'Not set' }}</div>
+          </div>
+        </div>
+        
+        <h3>Days Off</h3>
+        <div class="days-off-container">
+          <div class="days-chips">
+            <div *ngFor="let day of ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']" 
+                class="day-chip" 
+                [class.selected]="employee.daysOff?.includes(day)">
+              {{ day }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+    
+    <!-- Attendance Tab -->
+    <mat-tab label="Attendance">
+      <div class="tab-content">
+        <div class="attendance-not-available">
+          <mat-icon>event_busy</mat-icon>
+          <p>Attendance records coming soon!</p>
+          <button mat-raised-button color="primary">View Attendance History</button>
+        </div>
+      </div>
+    </mat-tab>
+    
+    <!-- Payroll Tab -->
+    <mat-tab label="Payroll">
+      <div class="tab-content">
+        <div class="payroll-summary">
+          <div class="salary-info">
+            <h3>Salary Information</h3>
+            <div class="salary-details">
+              <div class="salary-card">
+                <div class="salary-amount">${{ employee.salary || 0 | number:'1.2-2' }}</div>
+                <div class="salary-label">Base Salary</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="payroll-history">
+            <h3>Payroll History</h3>
+            <div class="no-payroll-data">
+              <mat-icon>account_balance_wallet</mat-icon>
+              <p>Payroll history will be available soon!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>
+
+<ng-template #loadingTemplate>
+  <div class="loading-container" *ngIf="isLoading; else errorTemplate">
+    <mat-icon class="loading-icon">hourglass_empty</mat-icon>
+    <p>Loading employee details...</p>
+  </div>
+</ng-template>
+
+<ng-template #errorTemplate>
+  <div class="error-container">
+    <mat-icon class="error-icon">error</mat-icon>
+    <h3>Error</h3>
+    <p>{{ error || 'Could not load employee details' }}</p>
+    <button mat-raised-button color="primary" (click)="goBack()">
+      Go Back
+    </button>
+  </div>
+</ng-template>

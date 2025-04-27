@@ -24,5 +24,20 @@ export const routes: Routes = [
     path: 'employees',
     loadComponent: () => import('./features/employees/employees.component').then(m => m.EmployeesComponent),
     canActivate: [authGuard]
+  },
+  {
+    path: 'employees/:id',
+    loadComponent: () => import('./features/employees/employee-detail/employee-detail.component').then(m => m.EmployeeDetailComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'attendance',
+    loadComponent: () => import('./features/attendance/attendance.component').then(m => m.AttendanceComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'projects',
+    loadComponent: () => import('./features/projects/projects.component').then(m => m.ProjectsComponent),
+    canActivate: [authGuard]
   }
 ];

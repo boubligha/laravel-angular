@@ -5,6 +5,8 @@ export interface Employee {
   email: string;
   phone: string;
   imageUrl?: string;
+  salary?: number;
+  daysOff?: string[];
   status?: 'online' | 'absent' | 'on-leave' | 'half-day';
   leaveType?: string;
   workHours?: {

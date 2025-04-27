@@ -1,0 +1,70 @@
+:host ::ng-deep {
+  .delete-project-dialog {
+    .p-dialog-header {
+      border-bottom: 1px solid #e5e7eb;
+      padding: 1.25rem;
+      
+      .p-dialog-title {
+        font-weight: 600;
+        color: #ef4444;
+        font-size: 1.25rem;
+      }
+    }
+    
+    .p-dialog-content {
+      padding: 1.5rem;
+    }
+    
+    .dialog-content {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      
+      .warning-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        background-color: #fef2f2;
+        border-radius: 50%;
+        flex-shrink: 0;
+        
+        i {
+          color: #ef4444;
+          font-size: 1.5rem;
+        }
+      }
+      
+      .warning-message {
+        p {
+          margin: 0 0 0.75rem;
+          font-size: 1rem;
+          line-height: 1.5;
+          color: #374151;
+          
+          &:last-child {
+            margin-bottom: 0;
+          }
+          
+          &.caution-text {
+            color: #9ca3af;
+            font-size: 0.9rem;
+          }
+          
+          strong {
+            color: #111827;
+          }
+        }
+      }
+    }
+    
+    .p-dialog-footer {
+      border-top: 1px solid #e5e7eb;
+      padding: 1.25rem;
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+  }
+}

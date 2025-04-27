@@ -1,0 +1,142 @@
+:host ::ng-deep {
+  .project-edit-dialog {
+    background-color: #ffffff;
+    
+    .p-dialog-header {
+      background-color: #f8f9fa;
+      border-bottom: 1px solid #e9ecef;
+      padding: 1.5rem;
+      
+      .p-dialog-title {
+        font-weight: 600;
+        font-size: 1.25rem;
+        color: #343a40;
+      }
+    }
+    
+    .p-dialog-content {
+      padding: 2rem;
+      background-color: #ffffff;
+    }
+    
+    .p-field {
+      margin-bottom: 1.5rem;
+      
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+      }
+    }
+    
+    .p-dropdown, .p-multiselect, .p-calendar {
+      width: 100%;
+    }
+    
+    .p-slider {
+      .p-slider-handle {
+        background-color: #3B82F6;
+        border: 2px solid #3B82F6;
+        
+        &:hover {
+          background-color: #2563EB;
+          border-color: #2563EB;
+        }
+      }
+      
+      .p-slider-range {
+        background-color: #3B82F6;
+      }
+    }
+    
+    .p-multiselect-token {
+      background-color: #EFF6FF;
+      color: #3B82F6;
+      border: 1px solid #BFDBFE;
+      padding: 0.25rem 0.5rem;
+      
+      .p-multiselect-token-icon {
+        color: #3B82F6;
+        
+        &:hover {
+          color: #2563EB;
+        }
+      }
+    }
+    
+    .team-avatars {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      
+      .team-avatar {
+        margin-right: -0.5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        border-radius: 50%;
+        border: 2px solid white;
+        
+        img {
+          display: block;
+        }
+      }
+      
+      span {
+        font-size: 0.85rem;
+        margin-left: 0.5rem;
+        color: #6b7280;
+        font-weight: 500;
+      }
+    }
+    
+    .p-calendar {
+      .p-inputtext {
+        width: 100%;
+      }
+    }
+    
+    .p-inputtext, .p-dropdown-label, .p-multiselect-label {
+      padding: 0.75rem;
+      font-size: 1rem;
+    }
+    
+    .p-button {
+      padding: 0.75rem 1.25rem;
+      
+      &.p-button-text {
+        color: #6b7280;
+        
+        &:hover {
+          background-color: #f3f4f6;
+          color: #4b5563;
+        }
+      }
+    }
+    
+    .p-dialog-footer {
+      padding: 1.5rem;
+      border-top: 1px solid #e9ecef;
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+    }
+    
+    .p-dropdown-panel, .p-multiselect-panel {
+      .p-dropdown-items, .p-multiselect-items {
+        padding: 0.5rem 0;
+        
+        .p-dropdown-item, .p-multiselect-item {
+          padding: 0.75rem 1rem;
+          
+          &:hover {
+            background-color: #f8f9fa;
+          }
+          
+          &.p-highlight {
+            background-color: #EFF6FF;
+            color: #3B82F6;
+          }
+        }
+      }
+    }
+  }
+}
