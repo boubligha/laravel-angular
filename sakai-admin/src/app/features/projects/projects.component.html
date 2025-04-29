@@ -112,4 +112,10 @@
   
   <!-- Delete Project Dialog -->
   <app-delete-project-dialog #deleteDialog [(visible)]="deleteDialogVisible"></app-delete-project-dialog>
+  
+  <!-- Add Project Dialog -->
+  <app-add-project-dialog
+    [(visible)]="addDialogVisible"
+    (projectAdded)="loadProjects()">
+  </app-add-project-dialog>
 </div>

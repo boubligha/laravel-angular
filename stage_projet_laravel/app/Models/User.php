@@ -68,4 +68,9 @@ public function collaborateur()
         return $this->belongsToMany(Equipe::class, 'equipe_utilisateur');
     }
 
+    public function employee()
+    {
+        return $this->hasOne(Employee::class);
+    }
+
 }

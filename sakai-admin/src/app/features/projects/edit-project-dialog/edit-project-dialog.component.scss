@@ -1,142 +1,273 @@
 :host ::ng-deep {
-  .project-edit-dialog {
-    background-color: #ffffff;
+  .edit-project-dialog {
+    .p-dialog {
+      background-color: white;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
     
     .p-dialog-header {
-      background-color: #f8f9fa;
-      border-bottom: 1px solid #e9ecef;
-      padding: 1.5rem;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 1.25rem;
+      background-color: white;
       
       .p-dialog-title {
         font-weight: 600;
         font-size: 1.25rem;
-        color: #343a40;
+        color: #1f2937;
       }
     }
     
     .p-dialog-content {
-      padding: 2rem;
-      background-color: #ffffff;
-    }
-    
-    .p-field {
-      margin-bottom: 1.5rem;
+      padding: 1.5rem;
+      background-color: white;
       
-      label {
-        display: block;
-        margin-bottom: 0.5rem;
+      .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 0;
+        
+        span {
+          margin-top: 1rem;
+          color: #6b7280;
+          font-size: 0.875rem;
+        }
+      }
+      
+      .section-header {
+        font-size: 1.125rem;
         font-weight: 500;
-      }
-    }
-    
-    .p-dropdown, .p-multiselect, .p-calendar {
-      width: 100%;
-    }
-    
-    .p-slider {
-      .p-slider-handle {
-        background-color: #3B82F6;
-        border: 2px solid #3B82F6;
+        color: #3f51b5;
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid #f0f0f0;
         
-        &:hover {
-          background-color: #2563EB;
-          border-color: #2563EB;
+        i {
+          margin-right: 0.5rem;
         }
       }
       
-      .p-slider-range {
-        background-color: #3B82F6;
-      }
-    }
-    
-    .p-multiselect-token {
-      background-color: #EFF6FF;
-      color: #3B82F6;
-      border: 1px solid #BFDBFE;
-      padding: 0.25rem 0.5rem;
-      
-      .p-multiselect-token-icon {
-        color: #3B82F6;
+      .field {
+        margin-bottom: 1.25rem;
         
-        &:hover {
-          color: #2563EB;
-        }
-      }
-    }
-    
-    .team-avatars {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      
-      .team-avatar {
-        margin-right: -0.5rem;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        border-radius: 50%;
-        border: 2px solid white;
-        
-        img {
+        label {
           display: block;
+          font-size: 0.875rem;
+          font-weight: 500;
+          color: #4b5563;
+          margin-bottom: 0.5rem;
+        }
+        
+        .p-inputtext, 
+        .p-dropdown, 
+        .p-multiselect,
+        .p-calendar,
+        .p-inputnumber,
+        .p-inputtextarea {
+          width: 100%;
+          background-color: #ffffff;
+          border: 1px solid #d1d5db;
+          border-radius: 0.375rem;
+          transition: all 0.3s;
+          
+          &:hover {
+            border-color: #a3a8b8;
+          }
+          
+          &:focus,
+          &.p-focus {
+            border-color: #3f51b5;
+            box-shadow: 0 0 0 2px rgba(63, 81, 181, 0.25);
+          }
+        }
+        
+        .p-dropdown-panel,
+        .p-multiselect-panel {
+          .p-dropdown-items,
+          .p-multiselect-items {
+            padding: 0.5rem 0;
+            
+            .p-dropdown-item,
+            .p-multiselect-item {
+              padding: 0.75rem 1rem;
+              transition: all 0.2s;
+              
+              &:hover {
+                background-color: #f3f4f6;
+              }
+              
+              &.p-highlight {
+                background-color: #e8eaf6;
+                color: #3f51b5;
+                font-weight: 500;
+              }
+            }
+          }
+        }
+        
+        .p-calendar {
+          .p-datepicker {
+            border-radius: 0.375rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            
+            .p-datepicker-header {
+              border-bottom: 1px solid #f0f0f0;
+              
+              .p-datepicker-title {
+                .p-datepicker-year,
+                .p-datepicker-month {
+                  color: #3f51b5;
+                  font-weight: 600;
+                }
+              }
+            }
+            
+            .p-datepicker-calendar {
+              .p-highlight {
+                background-color: #3f51b5;
+                color: #ffffff;
+              }
+            }
+          }
+        }
+        
+        .p-error {
+          color: #ef4444;
+          font-size: 0.75rem;
+          margin-top: 0.25rem;
         }
       }
       
-      span {
-        font-size: 0.85rem;
-        margin-left: 0.5rem;
-        color: #6b7280;
-        font-weight: 500;
-      }
-    }
-    
-    .p-calendar {
-      .p-inputtext {
-        width: 100%;
-      }
-    }
-    
-    .p-inputtext, .p-dropdown-label, .p-multiselect-label {
-      padding: 0.75rem;
-      font-size: 1rem;
-    }
-    
-    .p-button {
-      padding: 0.75rem 1.25rem;
-      
-      &.p-button-text {
-        color: #6b7280;
+      .progress-slider-container {
+        padding: 0.5rem 0;
         
-        &:hover {
-          background-color: #f3f4f6;
-          color: #4b5563;
+        .p-slider {
+          .p-slider-handle {
+            background-color: #3f51b5;
+            border-color: #3f51b5;
+          }
+          
+          .p-slider-range {
+            background-color: #3f51b5;
+          }
+        }
+      }
+      
+      .progress-preview {
+        height: 8px;
+        border-radius: 4px;
+        overflow: hidden;
+        
+        .p-progressbar {
+          height: 8px;
+          background-color: #e2e8f0;
+          
+          .p-progressbar-value {
+            background-color: #3f51b5;
+          }
+        }
+      }
+      
+      .project-preview-card {
+        background-color: #f9fafb;
+        border: 1px solid #e5e7eb;
+        margin-top: 1.5rem;
+        border-radius: 0.5rem;
+        
+        h4 {
+          font-size: 1rem;
+          font-weight: 500;
+          color: #374151;
+          margin-bottom: 1rem;
+          
+          i {
+            margin-right: 0.5rem;
+            color: #6b7280;
+          }
+        }
+        
+        .preview-item {
+          margin-bottom: 1rem;
+          
+          .label {
+            display: block;
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-bottom: 0.25rem;
+          }
+          
+          .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            
+            span {
+              font-size: 0.875rem;
+              font-weight: 500;
+              color: #4b5563;
+            }
+          }
         }
       }
     }
     
     .p-dialog-footer {
-      padding: 1.5rem;
-      border-top: 1px solid #e9ecef;
+      border-top: 1px solid #e5e7eb;
+      padding: 1.25rem;
       display: flex;
       justify-content: flex-end;
-      gap: 0.5rem;
-    }
-    
-    .p-dropdown-panel, .p-multiselect-panel {
-      .p-dropdown-items, .p-multiselect-items {
-        padding: 0.5rem 0;
+      gap: 0.75rem;
+      background-color: white;
+      
+      .p-button {
+        font-weight: 500;
         
-        .p-dropdown-item, .p-multiselect-item {
-          padding: 0.75rem 1rem;
+        &.p-button-text {
+          color: #6b7280;
           
           &:hover {
-            background-color: #f8f9fa;
+            background-color: #f3f4f6;
+            color: #4b5563;
+          }
+        }
+        
+        &.p-button-primary {
+          background-color: #3f51b5;
+          border-color: #3f51b5;
+          
+          &:hover {
+            background-color: #303f9f;
+            border-color: #303f9f;
           }
           
-          &.p-highlight {
-            background-color: #EFF6FF;
-            color: #3B82F6;
+          &:disabled {
+            background-color: #c5cae9;
+            border-color: #c5cae9;
           }
         }
       }
     }
+  }
+  
+  // Tag styling for preview
+  .tag-status-notstarted {
+    background-color: #dbeafe !important;
+    color: #1e40af !important;
+  }
+  
+  .tag-status-ongoing {
+    background-color: #dcfce7 !important;
+    color: #166534 !important;
+  }
+  
+  .tag-status-delayed {
+    background-color: #ffedd5 !important;
+    color: #c2410c !important;
+  }
+  
+  .tag-status-completed {
+    background-color: #d1fae5 !important;
+    color: #065f46 !important;
   }
 }

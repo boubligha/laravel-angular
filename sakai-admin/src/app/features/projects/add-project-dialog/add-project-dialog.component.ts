@@ -1,18 +1,26 @@
-import { Component, Inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatSelectModule } from '@angular/material/select';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatSliderModule } from '@angular/material/slider';
-import { MatIconModule } from '@angular/material/icon';
 import { Project } from '../../../core/models/project.model';
-import { Employee } from '../../../core/models/employee.model';
-import { EmployeeService } from '../../../core/services/employee.service';
+import { ProjectService } from '../../../core/services/project.service';
+import { MessageService } from 'primeng/api';
+
+// Import PrimeNG modules
+import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
+import { DropdownModule } from 'primeng/dropdown';
+import { CalendarModule } from 'primeng/calendar';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { SliderModule } from 'primeng/slider';
+import { InputTextarea } from 'primeng/inputtextarea';
+import { ButtonModule } from 'primeng/button';
+import { ProgressBarModule } from 'primeng/progressbar';
+
+interface OptionItem {
+  label: string;
+  value: any;
+}
 
 @Component({
   selector: 'app-add-project-dialog',
@@ -20,103 +28,182 @@ import { EmployeeService } from '../../../core/services/employee.service';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatSliderModule,
-    MatIconModule
+    DialogModule,
+    InputTextModule,
+    DropdownModule,
+    CalendarModule,
+    InputNumberModule,
+    MultiSelectModule,
+    SliderModule,
+    InputTextarea,
+    ButtonModule,
+    ProgressBarModule
   ],
   templateUrl: './add-project-dialog.component.html',
   styleUrls: ['./add-project-dialog.component.scss']
 })
-export class AddProjectDialogComponent {
-  projectForm: FormGroup;
-  employees: Employee[] = [];
-  priorities = ['Low', 'Medium', 'High'];
-  statuses = ['Not Started', 'Ongoing', 'Completed', 'Delayed'];
+export class AddProjectDialogComponent implements OnInit {
+  @Input() visible: boolean = false;
+  @Output() visibleChange = new EventEmitter<boolean>();
+  @Output() projectAdded = new EventEmitter<Project>();
+
+  projectForm!: FormGroup;
   
+  statusOptions: OptionItem[] = [
+    { label: 'Not Started', value: 'Not Started' },
+    { label: 'Ongoing', value: 'Ongoing' },
+    { label: 'Delayed', value: 'Delayed' },
+    { label: 'Completed', value: 'Completed' }
+  ];
+  
+  priorityOptions: OptionItem[] = [
+    { label: 'Low', value: 'Low' },
+    { label: 'Medium', value: 'Medium' },
+    { label: 'High', value: 'High' }
+  ];
+  
+  managerOptions: OptionItem[] = [];
+  teamLeadOptions: OptionItem[] = [];
+  teamMemberOptions: OptionItem[] = [];
+
   constructor(
-    private fb: FormBuilder,
-    private employeeService: EmployeeService,
-    public dialogRef: MatDialogRef<AddProjectDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { project?: Project }
-  ) {
-    this.projectForm = this.fb.group({
-      name: ['', [Validators.required]],
-      description: ['', [Validators.required]],
-      startDate: [new Date(), [Validators.required]],
-      deadline: [new Date(new Date().setMonth(new Date().getMonth() + 1)), [Validators.required]],
-      budget: [0, [Validators.required, Validators.min(0)]],
-      priority: ['Medium', [Validators.required]],
-      status: ['Not Started', [Validators.required]],
-      progress: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
-      pmId: [null, [Validators.required]],
-      tlId: [null, [Validators.required]],
-      teamIds: [[], [Validators.required]]
+    private formBuilder: FormBuilder,
+    private projectService: ProjectService,
+    private messageService: MessageService
+  ) {}
+
+  ngOnInit(): void {
+    this.initForm();
+    this.loadTeamOptions();
+  }
+
+  initForm(): void {
+    this.projectForm = this.formBuilder.group({
+      name: ['', Validators.required],
+      description: [''],
+      startDate: [null],
+      deadline: [null],
+      budget: [null],
+      status: ['Not Started'],
+      priority: ['Medium'],
+      progress: [0],
+      pm: [null],
+      tl: [null],
+      team: [[]]
     });
+  }
+
+  loadTeamOptions(): void {
+    // In a real application, these would be loaded from a service
+    this.managerOptions = [
+      { label: 'Sarah Johnson', value: { id: 1, name: 'Sarah Johnson', avatar: 'https://randomuser.me/api/portraits/women/1.jpg' } },
+      { label: 'David Miller', value: { id: 2, name: 'David Miller', avatar: 'https://randomuser.me/api/portraits/men/6.jpg' } },
+      { label: 'Emily Davis', value: { id: 3, name: 'Emily Davis', avatar: 'https://randomuser.me/api/portraits/women/3.jpg' } }
+    ];
     
-    // Load employees for dropdowns
-    this.loadEmployees();
+    this.teamLeadOptions = [
+      { label: 'Michael Chen', value: { id: 4, name: 'Michael Chen', avatar: 'https://randomuser.me/api/portraits/men/2.jpg' } },
+      { label: 'Robert Wilson', value: { id: 5, name: 'Robert Wilson', avatar: 'https://randomuser.me/api/portraits/men/8.jpg' } },
+      { label: 'Daniel Lee', value: { id: 6, name: 'Daniel Lee', avatar: 'https://randomuser.me/api/portraits/men/9.jpg' } }
+    ];
+    
+    this.teamMemberOptions = [
+      { label: 'John Smith', value: { id: 7, name: 'John Smith', avatar: 'https://randomuser.me/api/portraits/men/4.jpg' } },
+      { label: 'Alice Wong', value: { id: 8, name: 'Alice Wong', avatar: 'https://randomuser.me/api/portraits/women/5.jpg' } },
+      { label: 'Lisa Brown', value: { id: 9, name: 'Lisa Brown', avatar: 'https://randomuser.me/api/portraits/women/7.jpg' } },
+      { label: 'George Taylor', value: { id: 10, name: 'George Taylor', avatar: 'https://randomuser.me/api/portraits/men/10.jpg' } },
+      { label: 'Olivia Martinez', value: { id: 11, name: 'Olivia Martinez', avatar: 'https://randomuser.me/api/portraits/women/11.jpg' } }
+    ];
   }
-  
-  loadEmployees(): void {
-    this.employeeService.getAllEmployees().subscribe(employees => {
-      this.employees = employees;
+
+  isFieldInvalid(fieldName: string): boolean {
+    const field = this.projectForm.get(fieldName);
+    return field ? field.invalid && (field.dirty || field.touched) : false;
+  }
+
+  onSave(): void {
+    if (this.projectForm.invalid) {
+      this.markFormGroupTouched(this.projectForm);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Please fill in all required fields'
+      });
+      return;
+    }
+
+    const formValue = this.projectForm.value;
+    
+    // Format dates
+    const startDate = formValue.startDate ? 
+      this.formatDate(new Date(formValue.startDate)) : '';
+    
+    const deadline = formValue.deadline ? 
+      this.formatDate(new Date(formValue.deadline)) : '-';
+
+    // Create project object
+    const newProject: Project = {
+      id: 0, // Will be set by the service
+      name: formValue.name,
+      description: formValue.description,
+      startDate: startDate,
+      deadline: deadline,
+      budget: formValue.budget,
+      priority: formValue.priority,
+      status: formValue.status,
+      progress: formValue.progress,
+      pm: formValue.pm,
+      tl: formValue.tl,
+      team: formValue.team
+    };
+
+    // Add the project
+    this.projectService.addProject(newProject).subscribe({
+      next: (project) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Project added successfully'
+        });
+        this.projectAdded.emit(project);
+        this.onCancel();
+      },
+      error: (err) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to add project'
+        });
+        console.error('Error adding project:', err);
+      }
     });
   }
-  
-  onSubmit(): void {
-    if (this.projectForm.valid) {
-      const formValues = this.projectForm.value;
-      
-      // Find full employee objects based on IDs
-      const pm = this.employees.find(e => e.id === formValues.pmId);
-      const tl = this.employees.find(e => e.id === formValues.tlId);
-      const team = this.employees.filter(e => formValues.teamIds.includes(e.id));
-      
-      // Create project object with employee references
-      const project: Partial<Project> = {
-        name: formValues.name,
-        description: formValues.description,
-        startDate: this.formatDate(formValues.startDate),
-        deadline: this.formatDate(formValues.deadline),
-        budget: formValues.budget,
-        priority: formValues.priority,
-        status: formValues.status,
-        progress: formValues.progress,
-        pm: {
-          id: pm?.id || 0,
-          name: pm?.name || '',
-          avatar: pm?.imageUrl || ''
-        },
-        tl: {
-          id: tl?.id || 0,
-          name: tl?.name || '',
-          avatar: tl?.imageUrl || ''
-        },
-        team: team.map(member => ({
-          id: member.id,
-          name: member.name,
-          avatar: member.imageUrl || ''
-        }))
-      };
-      
-      this.dialogRef.close(project);
-    }
-  }
-  
+
   onCancel(): void {
-    this.dialogRef.close();
+    this.projectForm.reset({
+      status: 'Not Started',
+      priority: 'Medium',
+      progress: 0
+    });
+    this.visible = false;
+    this.visibleChange.emit(this.visible);
   }
-  
-  // Format date to string (YYYY-MM-DD)
+
+  // Helper method to format date as DD-MM-YYYY
   private formatDate(date: Date): string {
-    if (!date) return '';
-    const d = new Date(date);
-    return d.toISOString().split('T')[0];
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  }
+
+  // Helper method to mark all form controls as touched
+  private markFormGroupTouched(formGroup: FormGroup) {
+    Object.values(formGroup.controls).forEach(control => {
+      control.markAsTouched();
+      if (control instanceof FormGroup) {
+        this.markFormGroupTouched(control);
+      }
+    });
   }
 }

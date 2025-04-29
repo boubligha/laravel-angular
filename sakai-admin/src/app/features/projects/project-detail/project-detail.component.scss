@@ -507,3 +507,258 @@
     }
   }
 }
+
+.project-detail {
+  min-height: 100%;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 24px;
+
+  .team-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .member-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .team-card, .member-card {
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .flex {
+    gap: 10px;
+  }
+
+  p-tabView {
+    ::ng-deep {
+      .p-tabview-nav {
+        border-bottom: 1px solid #e0e0e0;
+
+        li {
+          margin-right: 8px;
+
+          .p-tabview-nav-link {
+            padding: 1rem 1.5rem;
+            color: #424242;
+            border: none;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            background-color: transparent;
+            font-weight: 500;
+
+            &:not(.p-disabled):focus {
+              box-shadow: none;
+            }
+
+            &:hover {
+              background-color: #f5f5f5;
+              color: #3f51b5;
+            }
+          }
+
+          &.p-highlight .p-tabview-nav-link {
+            border-color: #3f51b5;
+            color: #3f51b5;
+          }
+        }
+      }
+
+      .p-tabview-panels {
+        padding: 20px 0;
+      }
+    }
+  }
+
+  h2, h3, h4 {
+    font-weight: 500;
+    color: #333;
+  }
+
+  h3 {
+    font-size: 18px;
+    margin: 16px 0 12px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+  }
+
+  p-card {
+    ::ng-deep {
+      .p-card {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+
+        &:hover {
+          box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .p-card-body {
+          padding: 1.5rem;
+        }
+      }
+    }
+  }
+
+  .formgrid {
+    gap: 16px;
+  }
+
+  .field {
+    label {
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.6);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    margin-bottom: 20px;
+
+    p-inputText, p-dropdown, p-calendar, p-slider, textarea {
+      width: 100%;
+    }
+
+    textarea {
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      padding: 0.75rem;
+      resize: vertical;
+
+      &:focus {
+        outline: none;
+        border-color: #3f51b5;
+        box-shadow: 0 0 0 2px rgba(63, 81, 181, 0.2);
+      }
+    }
+
+    .p-error {
+      color: #f44336;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+  }
+
+  p-table {
+    ::ng-deep {
+      .p-datatable {
+        .p-datatable-header {
+          background-color: white;
+          border: none;
+          padding: 0.5rem 1rem;
+        }
+
+        .p-datatable-thead > tr > th {
+          background-color: #f5f5f5;
+          color: #424242;
+          font-weight: 600;
+          padding: 0.75rem 1rem;
+        }
+
+        .p-datatable-tbody > tr {
+          transition: all 0.2s;
+
+          &:hover {
+            background-color: #f8f9fa;
+          }
+
+          > td {
+            padding: 0.75rem 1rem;
+          }
+        }
+
+        .p-paginator {
+          padding: 0.75rem;
+        }
+      }
+    }
+  }
+
+  // Style buttons to match Material Design
+  ::ng-deep {
+    .p-button {
+      border-radius: 4px;
+      font-weight: 500;
+      transition: all 0.2s;
+
+      &.p-button-rounded {
+        border-radius: 50%;
+        width: 2.5rem;
+        height: 2.5rem;
+      }
+
+      &.p-button-text {
+        background-color: transparent;
+
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.04);
+        }
+      }
+
+      &.p-button-primary {
+        background-color: #3f51b5;
+        border-color: #3f51b5;
+
+        &:hover {
+          background-color: #303f9f;
+          border-color: #303f9f;
+        }
+      }
+
+      &.p-button-danger {
+        background-color: #f44336;
+        border-color: #f44336;
+
+        &:hover {
+          background-color: #d32f2f;
+          border-color: #d32f2f;
+        }
+      }
+    }
+  }
+}
+
+// Status and priority color utilities
+.tag-status-new, .tag-priority-low {
+  background-color: #bbdefb !important;
+  color: #1565c0 !important;
+}
+
+.tag-status-planning, .tag-priority-normal {
+  background-color: #c5cae9 !important;
+  color: #3949ab !important;
+}
+
+.tag-status-inprogress, .tag-priority-medium {
+  background-color: #fff9c4 !important;
+  color: #f57f17 !important;
+}
+
+.tag-status-completed, .tag-priority-completed {
+  background-color: #c8e6c9 !important;
+  color: #2e7d32 !important;
+}
+
+.tag-status-delayed, .tag-priority-high {
+  background-color: #ffccbc !important;
+  color: #d84315 !important;
+}
+
+.tag-status-canceled, .tag-priority-urgent {
+  background-color: #ffcdd2 !important;
+  color: #c62828 !important;
+}

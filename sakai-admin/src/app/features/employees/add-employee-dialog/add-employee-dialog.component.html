@@ -3,6 +3,23 @@
   
   <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
     <mat-dialog-content class="dialog-content">
+      <!-- User Selection Section -->
+      <h3 class="section-title">User Assignment</h3>
+      
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Select User</mat-label>
+          <mat-select formControlName="user_id">
+            <mat-option *ngFor="let user of users" [value]="user.id">
+              {{ user.name }} ({{ user.email }})
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="employeeForm.get('user_id')?.hasError('required')">
+            User selection is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+      
       <!-- Personal Information Section -->
       <h3 class="section-title">Personal Information</h3>
       
@@ -86,42 +103,32 @@
       <!-- Work Schedule Section -->
       <h3 class="section-title">Work Schedule</h3>
       
-      <div formGroupName="workHours">
-        <div class="form-row two-columns">
-          <mat-form-field appearance="outline">
-            <mat-label>In Time</mat-label>
-            <input matInput formControlName="inTime" placeholder="9:00 AM">
-            <mat-error *ngIf="employeeForm.get('workHours.inTime')?.hasError('required')">
-              In time is required
-            </mat-error>
-          </mat-form-field>
-          
-          <mat-form-field appearance="outline">
-            <mat-label>Out Time</mat-label>
-            <input matInput formControlName="outTime" placeholder="5:00 PM">
-            <mat-error *ngIf="employeeForm.get('workHours.outTime')?.hasError('required')">
-              Out time is required
-            </mat-error>
-          </mat-form-field>
-        </div>
+      <div class="form-row two-columns">
+        <mat-form-field appearance="outline">
+          <mat-label>Work Hours Start</mat-label>
+          <input matInput formControlName="work_hours_start" placeholder="9:00 AM">
+          <mat-error *ngIf="employeeForm.get('work_hours_start')?.hasError('required')">
+            Start time is required
+          </mat-error>
+        </mat-form-field>
         
-        <div class="form-row two-columns">
-          <mat-form-field appearance="outline">
-            <mat-label>Break Time (hours)</mat-label>
-            <input matInput formControlName="breakTime" placeholder="01:00">
-            <mat-error *ngIf="employeeForm.get('workHours.breakTime')?.hasError('required')">
-              Break time is required
-            </mat-error>
-          </mat-form-field>
-          
-          <mat-form-field appearance="outline">
-            <mat-label>Work Hours (hours)</mat-label>
-            <input matInput formControlName="workHours" placeholder="07:00">
-            <mat-error *ngIf="employeeForm.get('workHours.workHours')?.hasError('required')">
-              Work hours is required
-            </mat-error>
-          </mat-form-field>
-        </div>
+        <mat-form-field appearance="outline">
+          <mat-label>Work Hours End</mat-label>
+          <input matInput formControlName="work_hours_end" placeholder="5:00 PM">
+          <mat-error *ngIf="employeeForm.get('work_hours_end')?.hasError('required')">
+            End time is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+      
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Break Time</mat-label>
+          <input matInput formControlName="break_time" placeholder="01:00">
+          <mat-error *ngIf="employeeForm.get('break_time')?.hasError('required')">
+            Break time is required
+          </mat-error>
+        </mat-form-field>
       </div>
       
       <div class="form-row">

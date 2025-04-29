@@ -1,24 +1,65 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Project } from '../../../core/models/project.model';
 import { ProjectService } from '../../../core/services/project.service';
+import { CommonModule } from '@angular/common';
+
+// Import PrimeNG modules
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { DropdownModule } from 'primeng/dropdown';
+import { CalendarModule } from 'primeng/calendar';
+import { SliderModule } from 'primeng/slider';
+import { InputTextarea } from 'primeng/inputtextarea';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { TabViewModule } from 'primeng/tabview';
+import { TagModule } from 'primeng/tag';
+import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { TableModule } from 'primeng/table';
+import { CardModule } from 'primeng/card';
+
+interface OptionItem {
+  label: string;
+  value: any;
+}
 
 @Component({
   selector: 'app-project-detail',
   templateUrl: './project-detail.component.html',
   styleUrls: ['./project-detail.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    ProgressSpinnerModule,
+    ButtonModule,
+    InputTextModule,
+    DropdownModule,
+    CalendarModule,
+    SliderModule,
+    InputTextarea,
+    MultiSelectModule,
+    TabViewModule,
+    TagModule,
+    ToastModule,
+    ConfirmDialogModule,
+    TableModule,
+    CardModule
+  ],
   providers: [MessageService, ConfirmationService]
 })
 export class ProjectDetailComponent implements OnInit {
-  projectId: string;
-  project: Project;
+  projectId: string = '';
+  project!: Project;
   loading = true;
-  projectForm: FormGroup;
+  projectForm!: FormGroup;
   activeTabIndex = 0;
   
-  statusOptions = [
+  statusOptions: OptionItem[] = [
     { label: 'Not Started', value: 'Not Started' },
     { label: 'In Progress', value: 'In Progress' },
     { label: 'On Hold', value: 'On Hold' },
@@ -26,16 +67,16 @@ export class ProjectDetailComponent implements OnInit {
     { label: 'Cancelled', value: 'Cancelled' }
   ];
   
-  priorityOptions = [
+  priorityOptions: OptionItem[] = [
     { label: 'Low', value: 'Low' },
     { label: 'Medium', value: 'Medium' },
     { label: 'High', value: 'High' },
     { label: 'Critical', value: 'Critical' }
   ];
   
-  managerOptions = [];
-  teamLeadOptions = [];
-  teamMemberOptions = [];
+  managerOptions: OptionItem[] = [];
+  teamLeadOptions: OptionItem[] = [];
+  teamMemberOptions: OptionItem[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -68,49 +109,51 @@ export class ProjectDetailComponent implements OnInit {
   }
 
   loadProjectData() {
-    this.loading = true;
-    this.projectId = this.route.snapshot.paramMap.get('id');
-    
+    this.projectId = this.route.snapshot.paramMap.get('id') || '';
     if (this.projectId) {
       this.projectService.getProjectById(this.projectId).subscribe(
-        (project) => {
+        (project: Project) => {
           this.project = project;
           this.populateForm(project);
           this.loading = false;
         },
-        (error) => {
-          this.messageService.add({ 
-            severity: 'error', 
-            summary: 'Error', 
-            detail: 'Failed to load project data' 
+        (error: any) => {
+          console.error('Error loading project:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to load project data'
           });
           this.loading = false;
         }
       );
-    } else {
-      this.loading = false;
-      this.router.navigate(['/projects']);
     }
   }
 
   loadTeamOptions() {
-    // Simulating loading team options from a service
-    // In a real app, you would load these from your employee service
+    // In a real app, you would fetch these from a service
+    // Here we're just simulating the data
     this.managerOptions = [
-      { label: 'John Smith', value: { id: '1', name: 'John Smith', role: 'Project Manager', avatar: 'assets/images/avatar/avatar1.png' } },
-      { label: 'Sarah Johnson', value: { id: '2', name: 'Sarah Johnson', role: 'Project Manager', avatar: 'assets/images/avatar/avatar2.png' } }
+      { label: 'Sarah Johnson', value: { id: 1, name: 'Sarah Johnson', avatar: 'https://randomuser.me/api/portraits/women/1.jpg' } },
+      { label: 'Emily Davis', value: { id: 2, name: 'Emily Davis', avatar: 'https://randomuser.me/api/portraits/women/3.jpg' } },
+      { label: 'David Miller', value: { id: 3, name: 'David Miller', avatar: 'https://randomuser.me/api/portraits/men/6.jpg' } }
     ];
     
     this.teamLeadOptions = [
-      { label: 'Michael Brown', value: { id: '3', name: 'Michael Brown', role: 'Team Lead', avatar: 'assets/images/avatar/avatar3.png' } },
-      { label: 'Emily Davis', value: { id: '4', name: 'Emily Davis', role: 'Team Lead', avatar: 'assets/images/avatar/avatar4.png' } }
+      { label: 'Michael Chen', value: { id: 1, name: 'Michael Chen', avatar: 'https://randomuser.me/api/portraits/men/2.jpg' } },
+      { label: 'Robert Wilson', value: { id: 2, name: 'Robert Wilson', avatar: 'https://randomuser.me/api/portraits/men/8.jpg' } },
+      { label: 'Daniel Lee', value: { id: 3, name: 'Daniel Lee', avatar: 'https://randomuser.me/api/portraits/men/9.jpg' } }
     ];
     
     this.teamMemberOptions = [
-      { label: 'David Wilson', value: { id: '5', name: 'David Wilson', role: 'Developer', avatar: 'assets/images/avatar/avatar5.png' } },
-      { label: 'Jessica Martinez', value: { id: '6', name: 'Jessica Martinez', role: 'Designer', avatar: 'assets/images/avatar/avatar6.png' } },
-      { label: 'James Taylor', value: { id: '7', name: 'James Taylor', role: 'QA Engineer', avatar: 'assets/images/avatar/avatar7.png' } },
-      { label: 'Lisa Anderson', value: { id: '8', name: 'Lisa Anderson', role: 'Backend Developer', avatar: 'assets/images/avatar/avatar8.png' } }
+      { label: 'Sarah Johnson', value: { id: 1, name: 'Sarah Johnson', avatar: 'https://randomuser.me/api/portraits/women/1.jpg', role: 'Developer' } },
+      { label: 'Michael Chen', value: { id: 2, name: 'Michael Chen', avatar: 'https://randomuser.me/api/portraits/men/2.jpg', role: 'UX Designer' } },
+      { label: 'Emily Davis', value: { id: 3, name: 'Emily Davis', avatar: 'https://randomuser.me/api/portraits/women/3.jpg', role: 'Business Analyst' } },
+      { label: 'John Smith', value: { id: 4, name: 'John Smith', avatar: 'https://randomuser.me/api/portraits/men/4.jpg', role: 'Developer' } },
+      { label: 'Alice Wong', value: { id: 5, name: 'Alice Wong', avatar: 'https://randomuser.me/api/portraits/women/5.jpg', role: 'QA Tester' } },
+      { label: 'David Miller', value: { id: 6, name: 'David Miller', avatar: 'https://randomuser.me/api/portraits/men/6.jpg', role: 'DevOps Engineer' } },
+      { label: 'Lisa Brown', value: { id: 7, name: 'Lisa Brown', avatar: 'https://randomuser.me/api/portraits/women/7.jpg', role: 'Developer' } },
+      { label: 'Robert Wilson', value: { id: 8, name: 'Robert Wilson', avatar: 'https://randomuser.me/api/portraits/men/8.jpg', role: 'Data Scientist' } }
     ];
   }
 
@@ -137,7 +180,7 @@ export class ProjectDetailComponent implements OnInit {
     this.projectForm.patchValue({
       name: project.name,
       description: project.description,
-      startDate: startDate,
+      startDate: startDate || '',
       deadline: deadline,
       progress: project.progress || 0,
       status: project.status,
@@ -179,10 +222,10 @@ export class ProjectDetailComponent implements OnInit {
       priority: formValue.priority,
       pm: formValue.pm,
       tl: formValue.tl,
-      team: formValue.team ? formValue.team.map(member => member.value) : []
+      team: formValue.team ? formValue.team.map((member: any) => member.value) : []
     };
     
-    this.projectService.updateProject(this.projectId, updatedProject).subscribe(
+    this.projectService.updateProject(updatedProject).subscribe(
       () => {
         this.messageService.add({ 
           severity: 'success', 
@@ -208,23 +251,26 @@ export class ProjectDetailComponent implements OnInit {
       header: 'Delete Confirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.projectService.deleteProject(this.projectId).subscribe(
-          () => {
-            this.messageService.add({ 
-              severity: 'success', 
-              summary: 'Success', 
-              detail: 'Project deleted successfully' 
-            });
-            this.router.navigate(['/projects']);
-          },
-          (error) => {
-            this.messageService.add({ 
-              severity: 'error', 
-              summary: 'Error', 
-              detail: 'Failed to delete project' 
-            });
-          }
-        );
+        if (this.project && this.project.id) {
+          // Pass the numeric ID to the deleteProject method
+          this.projectService.deleteProject(Number(this.project.id)).subscribe(
+            () => {
+              this.messageService.add({ 
+                severity: 'success', 
+                summary: 'Success', 
+                detail: 'Project deleted successfully' 
+              });
+              this.router.navigate(['/projects']);
+            },
+            (error) => {
+              this.messageService.add({ 
+                severity: 'error', 
+                summary: 'Error', 
+                detail: 'Failed to delete project' 
+              });
+            }
+          );
+        }
       }
     });
   }

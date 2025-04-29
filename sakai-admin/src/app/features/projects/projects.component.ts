@@ -20,6 +20,7 @@ import { MessageService } from 'primeng/api';
 // Import dialog components
 import { EditProjectDialogComponent } from './edit-project-dialog/edit-project-dialog.component';
 import { DeleteProjectDialogComponent } from './delete-project-dialog/delete-project-dialog.component';
+import { AddProjectDialogComponent } from './add-project-dialog/add-project-dialog.component';
 
 @Component({
   selector: 'app-projects',
@@ -37,7 +38,8 @@ import { DeleteProjectDialogComponent } from './delete-project-dialog/delete-pro
     TooltipModule,
     ToastModule,
     EditProjectDialogComponent,
-    DeleteProjectDialogComponent
+    DeleteProjectDialogComponent,
+    AddProjectDialogComponent
   ],
   providers: [MessageService],
   templateUrl: './projects.component.html',
@@ -51,6 +53,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   // Edit dialog properties
   editDialogVisible: boolean = false;
   deleteDialogVisible: boolean = false;
+  addDialogVisible: boolean = false;
   selectedProject: Project | null = null;
   
   // Delete dialog reference
@@ -181,11 +184,6 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   }
   
   onAddProject(): void {
-    // Will implement this later if needed
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Coming Soon',
-      detail: 'Add project functionality will be available soon'
-    });
+    this.addDialogVisible = true;
   }
 }

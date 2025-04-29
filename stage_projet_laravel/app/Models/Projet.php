@@ -22,4 +22,10 @@ class Projet extends Model
     {
         return $this->belongsTo(Equipe::class);
     }
+
+    // Relation with employees
+    public function employees()
+    {
+        return $this->belongsToMany(Employee::class, 'employee_projet');
+    }
 }

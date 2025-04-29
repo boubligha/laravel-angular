@@ -1,208 +1,148 @@
 <p-dialog 
-  [(visible)]="visible" 
-  [modal]="true" 
+  [(visible)]="visible"
+  [modal]="true"
   [draggable]="false"
   [resizable]="false"
-  [style]="{ width: '700px' }"
+  [style]="{ width: '800px' }"
   header="Edit Project"
-  (onHide)="onDialogHide()"
-  styleClass="project-edit-dialog">
+  styleClass="edit-project-dialog"
+  [closeOnEscape]="true">
   
-  <p-toast></p-toast>
+  <div *ngIf="loading" class="loading-container">
+    <p-progressSpinner strokeWidth="4" [style]="{width: '50px', height: '50px'}"></p-progressSpinner>
+    <span>Loading project data...</span>
+  </div>
   
-  <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
-    <div class="grid">
-      <!-- Project Name -->
+  <form *ngIf="!loading" [formGroup]="projectForm">
+    <div class="p-fluid formgrid grid">
+      <!-- Basic Info Section -->
       <div class="col-12">
-        <div class="field">
-          <label for="name" class="font-medium text-900">Project Name</label>
-          <input id="name" type="text" pInputText formControlName="name" class="w-full" />
-          <small *ngIf="projectForm.get('name')?.invalid && projectForm.get('name')?.touched" class="p-error">
-            Project name is required
-          </small>
-        </div>
+        <h3 class="section-header"><i class="pi pi-info-circle"></i> Basic Information</h3>
       </div>
       
-      <!-- Start Date -->
-      <div class="col-6">
-        <div class="field">
-          <label for="startDate" class="font-medium text-900">Start Date</label>
-          <p-calendar 
-            id="startDate" 
-            formControlName="startDate" 
-            [showIcon]="true" 
-            dateFormat="dd-mm-yy"
-            [readonlyInput]="true"
-            class="w-full">
-          </p-calendar>
-          <small *ngIf="projectForm.get('startDate')?.invalid && projectForm.get('startDate')?.touched" class="p-error">
-            Start date is required
-          </small>
-        </div>
+      <div class="field col-12 md:col-6">
+        <label for="name">Project Name*</label>
+        <input pInputText id="name" type="text" formControlName="name" placeholder="Enter project name">
+        <small *ngIf="isFieldInvalid('name')" class="p-error">Project name is required</small>
       </div>
       
-      <!-- Deadline -->
-      <div class="col-6">
-        <div class="field">
-          <label for="deadline" class="font-medium text-900">Deadline</label>
-          <p-calendar 
-            id="deadline" 
-            formControlName="deadline" 
-            [showIcon]="true" 
-            dateFormat="dd-mm-yy"
-            [readonlyInput]="true"
-            class="w-full">
-          </p-calendar>
-        </div>
+      <div class="field col-12 md:col-6">
+        <label for="status">Project Status</label>
+        <p-dropdown id="status" [options]="statusOptions" optionLabel="label" optionValue="value"
+                    formControlName="status" placeholder="Select Status" [showClear]="false" styleClass="w-full"></p-dropdown>
       </div>
       
-      <!-- Priority -->
-      <div class="col-6">
-        <div class="field">
-          <label for="priority" class="font-medium text-900">Priority</label>
-          <p-dropdown 
-            id="priority" 
-            formControlName="priority" 
-            [options]="priorityOptions" 
-            placeholder="Select Priority"
-            [style]="{'width':'100%'}"
-            optionLabel="label">
-          </p-dropdown>
-          <small *ngIf="projectForm.get('priority')?.invalid && projectForm.get('priority')?.touched" class="p-error">
-            Priority is required
-          </small>
-        </div>
+      <div class="field col-12 md:col-6">
+        <label for="startDate">Start Date</label>
+        <p-calendar id="startDate" formControlName="startDate" 
+                   [showIcon]="true" dateFormat="yy-mm-dd" styleClass="w-full"
+                   placeholder="Select start date"></p-calendar>
       </div>
       
-      <!-- Status -->
-      <div class="col-6">
-        <div class="field">
-          <label for="status" class="font-medium text-900">Status</label>
-          <p-dropdown 
-            id="status" 
-            formControlName="status" 
-            [options]="statusOptions" 
-            placeholder="Select Status"
-            [style]="{'width':'100%'}"
-            optionLabel="label">
-          </p-dropdown>
-          <small *ngIf="projectForm.get('status')?.invalid && projectForm.get('status')?.touched" class="p-error">
-            Status is required
-          </small>
-        </div>
+      <div class="field col-12 md:col-6">
+        <label for="deadline">Deadline</label>
+        <p-calendar id="deadline" formControlName="deadline" 
+                   [showIcon]="true" dateFormat="yy-mm-dd" styleClass="w-full"
+                   placeholder="Select deadline"></p-calendar>
       </div>
       
-      <!-- Progress -->
+      <div class="field col-12 md:col-6">
+        <label for="priority">Priority</label>
+        <p-dropdown id="priority" [options]="priorityOptions" optionLabel="label" optionValue="value"
+                    formControlName="priority" placeholder="Select Priority" 
+                    [showClear]="false" styleClass="w-full"></p-dropdown>
+      </div>
+      
+      <div class="field col-12 md:col-6">
+        <label for="budget">Budget</label>
+        <p-inputNumber id="budget" formControlName="budget" mode="currency" currency="USD" 
+                        placeholder="Enter budget amount" styleClass="w-full"></p-inputNumber>
+      </div>
+      
+      <div class="field col-12">
+        <label for="description">Description</label>
+        <textarea pInputTextarea id="description" formControlName="description" 
+                 rows="3" placeholder="Enter project description"></textarea>
+      </div>
+      
+      <!-- Team Section -->
       <div class="col-12">
-        <div class="field">
-          <label for="progress" class="font-medium text-900">Progress: {{projectForm.get('progress')?.value}}%</label>
-          <p-slider 
-            id="progress"
-            formControlName="progress"
-            [min]="0"
-            [max]="100"
-            class="w-full">
-          </p-slider>
-        </div>
+        <h3 class="section-header"><i class="pi pi-users"></i> Project Team</h3>
       </div>
       
-      <!-- Project Manager -->
-      <div class="col-6">
-        <div class="field">
-          <label for="pm" class="font-medium text-900">Project Manager</label>
-          <p-dropdown 
-            id="pm" 
-            formControlName="pm" 
-            [options]="managerOptions" 
-            placeholder="Select Project Manager"
-            [style]="{'width':'100%'}"
-            optionLabel="label">
-            <ng-template pTemplate="selectedItem" let-selectedItem>
-              <div class="flex align-items-center gap-2" *ngIf="selectedItem">
-                <img [src]="selectedItem.value.avatar" style="width: 24px; height: 24px; border-radius: 50%;" />
-                <span>{{selectedItem.label}}</span>
-              </div>
-            </ng-template>
-            <ng-template pTemplate="item" let-item>
-              <div class="flex align-items-center gap-2">
-                <img [src]="item.value.avatar" style="width: 24px; height: 24px; border-radius: 50%;" />
-                <span>{{item.label}}</span>
-              </div>
-            </ng-template>
-          </p-dropdown>
-          <small *ngIf="projectForm.get('pm')?.invalid && projectForm.get('pm')?.touched" class="p-error">
-            Project Manager is required
-          </small>
-        </div>
+      <div class="field col-12 md:col-6">
+        <label for="pm">Project Manager</label>
+        <p-dropdown id="pm" [options]="managerOptions" optionLabel="label" 
+                    formControlName="pm" placeholder="Select Project Manager" 
+                    styleClass="w-full" [filter]="true"></p-dropdown>
       </div>
       
-      <!-- Team Lead -->
-      <div class="col-6">
-        <div class="field">
-          <label for="tl" class="font-medium text-900">Team Lead</label>
-          <p-dropdown 
-            id="tl" 
-            formControlName="tl" 
-            [options]="teamLeadOptions" 
-            placeholder="Select Team Lead"
-            [style]="{'width':'100%'}"
-            optionLabel="label">
-            <ng-template pTemplate="selectedItem" let-selectedItem>
-              <div class="flex align-items-center gap-2" *ngIf="selectedItem">
-                <img [src]="selectedItem.value.avatar" style="width: 24px; height: 24px; border-radius: 50%;" />
-                <span>{{selectedItem.label}}</span>
-              </div>
-            </ng-template>
-            <ng-template pTemplate="item" let-item>
-              <div class="flex align-items-center gap-2">
-                <img [src]="item.value.avatar" style="width: 24px; height: 24px; border-radius: 50%;" />
-                <span>{{item.label}}</span>
-              </div>
-            </ng-template>
-          </p-dropdown>
-          <small *ngIf="projectForm.get('tl')?.invalid && projectForm.get('tl')?.touched" class="p-error">
-            Team Lead is required
-          </small>
-        </div>
+      <div class="field col-12 md:col-6">
+        <label for="tl">Team Lead</label>
+        <p-dropdown id="tl" [options]="teamLeadOptions" optionLabel="label" 
+                    formControlName="tl" placeholder="Select Team Lead" 
+                    styleClass="w-full" [filter]="true"></p-dropdown>
       </div>
       
-      <!-- Team -->
+      <div class="field col-12">
+        <label for="team">Team Members</label>
+        <p-multiSelect id="team" [options]="teamMemberOptions" optionLabel="label" 
+                       formControlName="team" placeholder="Select Team Members" 
+                       [filter]="true" styleClass="w-full" display="chip"></p-multiSelect>
+      </div>
+      
+      <!-- Project Preview Section -->
       <div class="col-12">
-        <div class="field">
-          <label for="team" class="font-medium text-900">Team Members</label>
-          <p-multiSelect 
-            id="team"
-            formControlName="team"
-            [options]="teamMembers"
-            [style]="{'width':'100%'}"
-            optionLabel="name"
-            placeholder="Select Team Members" 
-            display="chip">
-            <ng-template pTemplate="selectedItems" let-selectedItems>
-              <div class="team-avatars flex align-items-center gap-1" *ngIf="selectedItems">
-                <div *ngFor="let item of selectedItems.slice(0, 5)" class="team-avatar">
-                  <img [src]="item.avatar" style="width: 24px; height: 24px; border-radius: 50%;" />
+        <h3 class="section-header"><i class="pi pi-chart-line"></i> Progress</h3>
+      </div>
+      
+      <div class="field col-12">
+        <label for="progress">Progress ({{ projectForm.controls['progress'].value }}%)</label>
+        <div class="progress-slider-container">
+          <p-slider formControlName="progress" [min]="0" [max]="100" styleClass="w-full"></p-slider>
+        </div>
+        <div class="progress-preview mt-2">
+          <p-progressBar [value]="projectForm.controls['progress'].value" [showValue]="false"></p-progressBar>
+        </div>
+      </div>
+      
+      <!-- Project Preview -->
+      <div class="col-12 mt-3">
+        <div class="project-preview-card p-3 border-round">
+          <h4 class="mb-2"><i class="pi pi-eye"></i> Preview</h4>
+          <div class="grid">
+            <div class="col-12 md:col-4">
+              <div class="preview-item">
+                <span class="label">Status</span>
+                <p-tag [value]="projectForm.value.status" 
+                       styleClass="tag-status-{{projectForm.value.status?.toLowerCase().replace(' ', '')}}"></p-tag>
+              </div>
+            </div>
+            <div class="col-12 md:col-4">
+              <div class="preview-item">
+                <span class="label">Priority</span>
+                <p-tag [value]="projectForm.value.priority" 
+                       styleClass="tag-priority-{{projectForm.value.priority?.toLowerCase()}}"></p-tag>
+              </div>
+            </div>
+            <div class="col-12 md:col-4">
+              <div class="preview-item">
+                <span class="label">Progress</span>
+                <div class="progress-container flex align-items-center">
+                  <p-progressBar [value]="projectForm.value.progress" [showValue]="false" [style]="{height: '8px', width: '70%'}"></p-progressBar>
+                  <span class="ml-2">{{projectForm.value.progress}}%</span>
                 </div>
-                <span *ngIf="selectedItems.length > 5">+{{selectedItems.length - 5}} more</span>
               </div>
-            </ng-template>
-            <ng-template let-item pTemplate="item">
-              <div class="flex align-items-center gap-2">
-                <img [src]="item.avatar" style="width: 24px; height: 24px; border-radius: 50%;" />
-                <span>{{item.name}}</span>
-              </div>
-            </ng-template>
-          </p-multiSelect>
-          <small *ngIf="projectForm.get('team')?.invalid && projectForm.get('team')?.touched" class="p-error">
-            At least one team member is required
-          </small>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </form>
   
   <ng-template pTemplate="footer">
-    <button pButton label="Cancel" icon="pi pi-times" (click)="onCancel()" class="p-button-text"></button>
-    <button pButton label="Save" icon="pi pi-check" (click)="onSubmit()" [disabled]="projectForm.invalid"></button>
+    <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="onCancel()"></button>
+    <button pButton pRipple label="Save Changes" icon="pi pi-check" class="p-button-primary" 
+            (click)="onSave()" [disabled]="projectForm.invalid || loading"></button>
   </ng-template>
 </p-dialog>

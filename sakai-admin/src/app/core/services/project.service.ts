@@ -164,6 +164,12 @@ export class ProjectService {
     return of(this.projects);
   }
 
+  getProjectById(id: string): Observable<Project> {
+    const numericId = parseInt(id, 10);
+    const project = this.projects.find(p => p.id === numericId);
+    return of(project as Project);
+  }
+
   addProject(project: Project): Observable<Project> {
     project.id = this.projects.length + 1;
     this.projects.push(project);

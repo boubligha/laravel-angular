@@ -1,12 +1,19 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { Employee } from '../models/employee.model';
+import { HttpApiService } from './http-api.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EmployeeService {
   
+  private apiUrl = environment.apiUrl;
+  
+  // Keep mock data for fallback or development purposes
   private employees: Employee[] = [
     {
       id: 1,
@@ -106,44 +113,285 @@ export class EmployeeService {
     }
   ];
 
-  constructor() { }
+  constructor(
+    private http: HttpClient,
+    private apiService: HttpApiService
+  ) { }
 
+  // Get all employees from the API
   getEmployees(): Observable<Employee[]> {
-    return of(this.employees);
+    const headers = this.getAuthHeaders();
+    return this.http.get<any>(`${this.apiUrl}/employees`, { headers })
+      .pipe(
+        map(response => {
+          if (response && response.status === 'success' && response.employees) {
+            return response.employees;
+          }
+          return this.employees; // Fallback to mock data
+        }),
+        catchError(error => {
+          console.error('Error fetching employees:', error);
+          return of(this.employees); // Fallback to mock data
+        })
+      );
   }
 
   getAllEmployees(): Observable<Employee[]> {
     return this.getEmployees();
   }
 
+  // Get employee by ID
   getEmployeeById(id: number): Observable<Employee> {
-    const employee = this.employees.find(e => e.id === id);
-    if (employee) {
-      return of(employee);
-    }
-    return of({} as Employee);
+    const headers = this.getAuthHeaders();
+    return this.http.get<any>(`${this.apiUrl}/employees/${id}`, { headers })
+      .pipe(
+        map(response => {
+          if (response && response.status === 'success' && response.employee) {
+            return response.employee;
+          }
+          const mockEmployee = this.employees.find(e => e.id === id);
+          return mockEmployee || {} as Employee;
+        }),
+        catchError(error => {
+          console.error(`Error fetching employee ${id}:`, error);
+          const mockEmployee = this.employees.find(e => e.id === id);
+          return of(mockEmployee || {} as Employee);
+        })
+      );
   }
 
+  // Add a new employee
   addEmployee(employee: Employee): Observable<Employee> {
-    employee.id = this.employees.length + 1;
-    this.employees.push(employee);
-    return of(employee);
+    const headers = this.getAuthHeaders();
+    
+    // If there's a Base64 image in the imageUrl, handle it separately
+    if (employee.imageUrl && employee.imageUrl.startsWith('data:image')) {
+      return this.addEmployeeWithImage(employee);
+    }
+    
+    return this.http.post<any>(`${this.apiUrl}/employees`, employee, { headers })
+      .pipe(
+        map(response => {
+          if (response && response.status === 'success' && response.employee) {
+            return response.employee;
+          }
+          // Fallback to mock behavior
+          employee.id = this.employees.length + 1;
+          this.employees.push(employee);
+          return employee;
+        }),
+        catchError(error => {
+          console.error('Error adding employee:', error);
+          // Fallback to mock behavior
+          employee.id = this.employees.length + 1;
+          this.employees.push(employee);
+          return of(employee);
+        })
+      );
   }
 
+  // Update an existing employee
   updateEmployee(employee: Employee): Observable<Employee> {
-    const index = this.employees.findIndex(e => e.id === employee.id);
-    if (index !== -1) {
-      this.employees[index] = employee;
+    const headers = this.getAuthHeaders();
+    
+    // If there's a Base64 image in the imageUrl, handle it separately
+    if (employee.imageUrl && employee.imageUrl.startsWith('data:image')) {
+      return this.updateEmployeeWithImage(employee);
     }
-    return of(employee);
+    
+    return this.http.put<any>(`${this.apiUrl}/employees/${employee.id}`, employee, { headers })
+      .pipe(
+        map(response => {
+          if (response && response.status === 'success' && response.employee) {
+            return response.employee;
+          }
+          // Fallback to mock behavior
+          const index = this.employees.findIndex(e => e.id === employee.id);
+          if (index !== -1) {
+            this.employees[index] = employee;
+          }
+          return employee;
+        }),
+        catchError(error => {
+          console.error('Error updating employee:', error);
+          // Fallback to mock behavior
+          const index = this.employees.findIndex(e => e.id === employee.id);
+          if (index !== -1) {
+            this.employees[index] = employee;
+          }
+          return of(employee);
+        })
+      );
   }
 
+  // Delete an employee
   deleteEmployee(id: number): Observable<boolean> {
-    const index = this.employees.findIndex(e => e.id === id);
-    if (index !== -1) {
-      this.employees.splice(index, 1);
-      return of(true);
+    const headers = this.getAuthHeaders();
+    return this.http.delete<any>(`${this.apiUrl}/employees/${id}`, { headers })
+      .pipe(
+        map(response => {
+          if (response && response.status === 'success') {
+            return true;
+          }
+          // Fallback to mock behavior
+          const index = this.employees.findIndex(e => e.id === id);
+          if (index !== -1) {
+            this.employees.splice(index, 1);
+          }
+          return true;
+        }),
+        catchError(error => {
+          console.error('Error deleting employee:', error);
+          // Fallback to mock behavior
+          const index = this.employees.findIndex(e => e.id === id);
+          if (index !== -1) {
+            this.employees.splice(index, 1);
+          }
+          return of(true);
+        })
+      );
+  }
+
+  // Upload employee image
+  uploadEmployeeImage(employeeId: number, imageFile: File): Observable<string> {
+    const headers = this.getAuthHeaders();
+    const formData = new FormData();
+    formData.append('image', imageFile);
+    
+    return this.http.post<any>(`${this.apiUrl}/employees/${employeeId}/upload-image`, formData, { headers })
+      .pipe(
+        map(response => {
+          if (response && response.status === 'success' && response.image_url) {
+            return response.image_url;
+          }
+          return '';
+        }),
+        catchError(error => {
+          console.error('Error uploading image:', error);
+          return of('');
+        })
+      );
+  }
+
+  // Helper method to add employee with image
+  private addEmployeeWithImage(employee: Employee): Observable<Employee> {
+    // First create the employee without the image
+    const employeeData = { ...employee };
+    const imageUrl = employeeData.imageUrl;
+    employeeData.imageUrl = ''; // Remove the base64 image
+    
+    const headers = this.getAuthHeaders();
+    return this.http.post<any>(`${this.apiUrl}/employees`, employeeData, { headers })
+      .pipe(
+        map(response => {
+          if (response && response.status === 'success' && response.employee) {
+            const newEmployee = response.employee;
+            
+            // Then upload the image if we have one
+            if (imageUrl && imageUrl.startsWith('data:image')) {
+              // Convert base64 to blob
+              const imageBlob = this.dataURItoBlob(imageUrl);
+              const imageFile = new File([imageBlob], 'profile.jpg', { type: 'image/jpeg' });
+              
+              // Upload the image
+              this.uploadEmployeeImage(newEmployee.id, imageFile).subscribe(
+                url => {
+                  if (url) {
+                    newEmployee.imageUrl = url;
+                  }
+                }
+              );
+            }
+            
+            return newEmployee;
+          }
+          
+          // Fallback to mock behavior
+          employee.id = this.employees.length + 1;
+          this.employees.push(employee);
+          return employee;
+        }),
+        catchError(error => {
+          console.error('Error adding employee with image:', error);
+          // Fallback to mock behavior
+          employee.id = this.employees.length + 1;
+          this.employees.push(employee);
+          return of(employee);
+        })
+      );
+  }
+
+  // Helper method to update employee with image
+  private updateEmployeeWithImage(employee: Employee): Observable<Employee> {
+    // First update the employee without the image
+    const employeeData = { ...employee };
+    const imageUrl = employeeData.imageUrl;
+    employeeData.imageUrl = ''; // Remove the base64 image
+    
+    const headers = this.getAuthHeaders();
+    return this.http.put<any>(`${this.apiUrl}/employees/${employee.id}`, employeeData, { headers })
+      .pipe(
+        map(response => {
+          if (response && response.status === 'success' && response.employee) {
+            const updatedEmployee = response.employee;
+            
+            // Then upload the image if we have one
+            if (imageUrl && imageUrl.startsWith('data:image')) {
+              // Convert base64 to blob
+              const imageBlob = this.dataURItoBlob(imageUrl);
+              const imageFile = new File([imageBlob], 'profile.jpg', { type: 'image/jpeg' });
+              
+              // Upload the image
+              this.uploadEmployeeImage(updatedEmployee.id, imageFile).subscribe(
+                url => {
+                  if (url) {
+                    updatedEmployee.imageUrl = url;
+                  }
+                }
+              );
+            }
+            
+            return updatedEmployee;
+          }
+          
+          // Fallback to mock behavior
+          const index = this.employees.findIndex(e => e.id === employee.id);
+          if (index !== -1) {
+            this.employees[index] = employee;
+          }
+          return employee;
+        }),
+        catchError(error => {
+          console.error('Error updating employee with image:', error);
+          // Fallback to mock behavior
+          const index = this.employees.findIndex(e => e.id === employee.id);
+          if (index !== -1) {
+            this.employees[index] = employee;
+          }
+          return of(employee);
+        })
+      );
+  }
+
+  // Helper method to convert data URI to Blob
+  private dataURItoBlob(dataURI: string): Blob {
+    const byteString = atob(dataURI.split(',')[1]);
+    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
     }
-    return of(false);
+    
+    return new Blob([ab], { type: mimeString });
+  }
+
+  // Helper method to get auth headers
+  private getAuthHeaders(): HttpHeaders {
+    const token = this.apiService.getAuthToken();
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
   }
 }

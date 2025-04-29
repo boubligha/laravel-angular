@@ -1,154 +1,111 @@
-<div class="dialog-container">
-  <h2 mat-dialog-title class="dialog-title">Add New Project</h2>
+<p-dialog 
+  [(visible)]="visible"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '800px' }"
+  header="Add New Project"
+  styleClass="add-project-dialog"
+  [closeOnEscape]="true">
   
-  <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
-    <mat-dialog-content class="dialog-content">
-      <!-- Project Information Section -->
-      <h3 class="section-title">Project Information</h3>
-      
-      <div class="form-row">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Project Name</mat-label>
-          <input matInput formControlName="name" placeholder="Project X">
-          <mat-error *ngIf="projectForm.get('name')?.hasError('required')">
-            Project name is required
-          </mat-error>
-        </mat-form-field>
+  <form [formGroup]="projectForm">
+    <div class="p-fluid formgrid grid">
+      <!-- Basic Info Section -->
+      <div class="col-12">
+        <h3 class="section-header"><i class="pi pi-info-circle"></i> Basic Information</h3>
       </div>
       
-      <div class="form-row">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Description</mat-label>
-          <textarea matInput formControlName="description" placeholder="Project description..." rows="3"></textarea>
-          <mat-error *ngIf="projectForm.get('description')?.hasError('required')">
-            Description is required
-          </mat-error>
-        </mat-form-field>
+      <div class="field col-12 md:col-6">
+        <label for="name">Project Name*</label>
+        <input pInputText id="name" type="text" formControlName="name" placeholder="Enter project name">
+        <small *ngIf="isFieldInvalid('name')" class="p-error">Project name is required</small>
       </div>
       
-      <div class="form-row two-columns">
-        <mat-form-field appearance="outline">
-          <mat-label>Start Date</mat-label>
-          <input matInput [matDatepicker]="startDatepicker" formControlName="startDate">
-          <mat-datepicker-toggle matSuffix [for]="startDatepicker"></mat-datepicker-toggle>
-          <mat-datepicker #startDatepicker></mat-datepicker>
-          <mat-error *ngIf="projectForm.get('startDate')?.hasError('required')">
-            Start date is required
-          </mat-error>
-        </mat-form-field>
-        
-        <mat-form-field appearance="outline">
-          <mat-label>Deadline</mat-label>
-          <input matInput [matDatepicker]="deadlineDatepicker" formControlName="deadline">
-          <mat-datepicker-toggle matSuffix [for]="deadlineDatepicker"></mat-datepicker-toggle>
-          <mat-datepicker #deadlineDatepicker></mat-datepicker>
-          <mat-error *ngIf="projectForm.get('deadline')?.hasError('required')">
-            Deadline is required
-          </mat-error>
-        </mat-form-field>
+      <div class="field col-12 md:col-6">
+        <label for="status">Project Status</label>
+        <p-dropdown id="status" [options]="statusOptions" optionLabel="label" optionValue="value"
+                    formControlName="status" placeholder="Select Status" [showClear]="false" styleClass="w-full"></p-dropdown>
       </div>
       
-      <div class="form-row two-columns">
-        <mat-form-field appearance="outline">
-          <mat-label>Budget</mat-label>
-          <input matInput formControlName="budget" type="number" placeholder="0.00">
-          <span matPrefix>$&nbsp;</span>
-          <mat-error *ngIf="projectForm.get('budget')?.hasError('required')">
-            Budget is required
-          </mat-error>
-          <mat-error *ngIf="projectForm.get('budget')?.hasError('min')">
-            Budget must be a positive number
-          </mat-error>
-        </mat-form-field>
-        
-        <mat-form-field appearance="outline">
-          <mat-label>Priority</mat-label>
-          <mat-select formControlName="priority">
-            <mat-option *ngFor="let priority of priorities" [value]="priority">
-              {{ priority }}
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="projectForm.get('priority')?.hasError('required')">
-            Priority is required
-          </mat-error>
-        </mat-form-field>
+      <div class="field col-12 md:col-6">
+        <label for="startDate">Start Date</label>
+        <p-calendar id="startDate" formControlName="startDate" 
+                   [showIcon]="true" dateFormat="yy-mm-dd" styleClass="w-full"
+                   placeholder="Select start date"></p-calendar>
       </div>
       
-      <div class="form-row two-columns">
-        <mat-form-field appearance="outline">
-          <mat-label>Status</mat-label>
-          <mat-select formControlName="status">
-            <mat-option *ngFor="let status of statuses" [value]="status">
-              {{ status }}
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="projectForm.get('status')?.hasError('required')">
-            Status is required
-          </mat-error>
-        </mat-form-field>
-        
-        <div class="progress-field">
-          <label>Progress ({{ projectForm.get('progress')?.value || 0 }}%)</label>
-          <mat-slider
-            min="0"
-            max="100"
-            step="5"
-            color="primary"
-            class="full-width">
-            <input matSliderThumb formControlName="progress">
-          </mat-slider>
+      <div class="field col-12 md:col-6">
+        <label for="deadline">Deadline</label>
+        <p-calendar id="deadline" formControlName="deadline" 
+                   [showIcon]="true" dateFormat="yy-mm-dd" styleClass="w-full"
+                   placeholder="Select deadline"></p-calendar>
+      </div>
+      
+      <div class="field col-12 md:col-6">
+        <label for="priority">Priority</label>
+        <p-dropdown id="priority" [options]="priorityOptions" optionLabel="label" optionValue="value"
+                    formControlName="priority" placeholder="Select Priority" 
+                    [showClear]="false" styleClass="w-full"></p-dropdown>
+      </div>
+      
+      <div class="field col-12 md:col-6">
+        <label for="budget">Budget</label>
+        <p-inputNumber id="budget" formControlName="budget" mode="currency" currency="USD" 
+                        placeholder="Enter budget amount" styleClass="w-full"></p-inputNumber>
+      </div>
+      
+      <div class="field col-12">
+        <label for="description">Description</label>
+        <textarea pInputTextarea id="description" formControlName="description" 
+                 rows="3" placeholder="Enter project description"></textarea>
+      </div>
+      
+      <!-- Team Section -->
+      <div class="col-12">
+        <h3 class="section-header"><i class="pi pi-users"></i> Project Team</h3>
+      </div>
+      
+      <div class="field col-12 md:col-6">
+        <label for="pm">Project Manager</label>
+        <p-dropdown id="pm" [options]="managerOptions" optionLabel="label" 
+                    formControlName="pm" placeholder="Select Project Manager" 
+                    styleClass="w-full" [filter]="true"></p-dropdown>
+      </div>
+      
+      <div class="field col-12 md:col-6">
+        <label for="tl">Team Lead</label>
+        <p-dropdown id="tl" [options]="teamLeadOptions" optionLabel="label" 
+                    formControlName="tl" placeholder="Select Team Lead" 
+                    styleClass="w-full" [filter]="true"></p-dropdown>
+      </div>
+      
+      <div class="field col-12">
+        <label for="team">Team Members</label>
+        <p-multiSelect id="team" [options]="teamMemberOptions" optionLabel="label" 
+                       formControlName="team" placeholder="Select Team Members" 
+                       [filter]="true" styleClass="w-full"
+                       display="chip"></p-multiSelect>
+      </div>
+      
+      <!-- Progress Section -->
+      <div class="col-12">
+        <h3 class="section-header"><i class="pi pi-chart-line"></i> Progress</h3>
+      </div>
+      
+      <div class="field col-12">
+        <label for="progress">Progress ({{ projectForm.controls['progress'].value }}%)</label>
+        <div class="progress-slider-container">
+          <p-slider formControlName="progress" [min]="0" [max]="100" styleClass="w-full"></p-slider>
+        </div>
+        <div class="progress-preview mt-2">
+          <p-progressBar [value]="projectForm.controls['progress'].value" [showValue]="false"></p-progressBar>
         </div>
       </div>
-
-      <!-- Team Section -->
-      <h3 class="section-title">Team Assignment</h3>
-      
-      <div class="form-row two-columns">
-        <mat-form-field appearance="outline">
-          <mat-label>Project Manager</mat-label>
-          <mat-select formControlName="pmId">
-            <mat-option *ngFor="let employee of employees" [value]="employee.id">
-              {{ employee.name }}
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="projectForm.get('pmId')?.hasError('required')">
-            Project Manager is required
-          </mat-error>
-        </mat-form-field>
-        
-        <mat-form-field appearance="outline">
-          <mat-label>Team Lead</mat-label>
-          <mat-select formControlName="tlId">
-            <mat-option *ngFor="let employee of employees" [value]="employee.id">
-              {{ employee.name }}
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="projectForm.get('tlId')?.hasError('required')">
-            Team Lead is required
-          </mat-error>
-        </mat-form-field>
-      </div>
-      
-      <div class="form-row">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Team Members</mat-label>
-          <mat-select formControlName="teamIds" multiple>
-            <mat-option *ngFor="let employee of employees" [value]="employee.id">
-              {{ employee.name }}
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="projectForm.get('teamIds')?.hasError('required')">
-            At least one team member is required
-          </mat-error>
-        </mat-form-field>
-      </div>
-    </mat-dialog-content>
-    
-    <mat-dialog-actions align="end">
-      <button mat-button type="button" (click)="onCancel()">Cancel</button>
-      <button mat-raised-button color="primary" type="submit" [disabled]="projectForm.invalid">
-        Add Project
-      </button>
-    </mat-dialog-actions>
+    </div>
   </form>
-</div>
+  
+  <ng-template pTemplate="footer">
+    <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="onCancel()"></button>
+    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-primary" (click)="onSave()" [disabled]="projectForm.invalid"></button>
+  </ng-template>
+</p-dialog>
