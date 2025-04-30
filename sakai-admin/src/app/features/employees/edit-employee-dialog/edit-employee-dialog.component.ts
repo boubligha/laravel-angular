@@ -1,4 +1,4 @@
-import { Component, Inject, ElementRef, ViewChild } from '@angular/core';
+import { Component, Inject, ElementRef, ViewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -31,7 +31,7 @@ import { Employee } from '../../../core/models/employee.model';
   templateUrl: './edit-employee-dialog.component.html',
   styleUrls: ['./edit-employee-dialog.component.scss']
 })
-export class EditEmployeeDialogComponent {
+export class EditEmployeeDialogComponent implements OnInit {
   employeeForm: FormGroup;
   selectedFile: File | null = null;
   previewImageUrl: string | ArrayBuffer | null = null;
@@ -58,10 +58,11 @@ export class EditEmployeeDialogComponent {
     // Create the form with existing data
     this.employeeForm = this.fb.group({
       id: [data.employee.id],
+      user_id: [data.employee.user_id], // Add user_id field
       name: [data.employee.name, [Validators.required]],
-      position: [data.employee.position, [Validators.required]],
+      position: [data.employee.position || '', [Validators.required]],
       email: [data.employee.email, [Validators.required, Validators.email]],
-      phone: [data.employee.phone, [Validators.required]],
+      phone: [data.employee.phone || '', [Validators.required]],
       status: [data.employee.status || 'online'],
       imageUrl: [data.employee.imageUrl || ''],
       salary: [data.employee.salary || 0, [Validators.required, Validators.min(0)]],
@@ -80,6 +81,10 @@ export class EditEmployeeDialogComponent {
     }
   }
   
+  ngOnInit(): void {
+    console.log('Edit Employee Dialog initialized with data:', this.data.employee);
+  }
+
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length) {
@@ -127,6 +132,7 @@ export class EditEmployeeDialogComponent {
         formData.imageUrl = this.previewImageUrl;
       }
       
+      console.log('Submitting form data:', formData);
       this.dialogRef.close(formData);
     }
   }

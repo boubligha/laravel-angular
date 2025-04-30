@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { Observable, of, forkJoin } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { Employee } from '../models/employee.model';
 import { HttpApiService } from './http-api.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -125,7 +125,14 @@ export class EmployeeService {
       .pipe(
         map(response => {
           if (response && response.status === 'success' && response.employees) {
-            return response.employees;
+            // Make sure each employee has a proper imageUrl
+            return response.employees.map(emp => {
+              // If the image_url exists but imageUrl doesn't, map it
+              if (emp.image_url && !emp.imageUrl) {
+                emp.imageUrl = emp.image_url;
+              }
+              return emp;
+            });
           }
           return this.employees; // Fallback to mock data
         }),
@@ -147,7 +154,12 @@ export class EmployeeService {
       .pipe(
         map(response => {
           if (response && response.status === 'success' && response.employee) {
-            return response.employee;
+            // Map image_url to imageUrl if it exists
+            const employee = response.employee;
+            if (employee.image_url && !employee.imageUrl) {
+              employee.imageUrl = employee.image_url;
+            }
+            return employee;
           }
           const mockEmployee = this.employees.find(e => e.id === id);
           return mockEmployee || {} as Employee;
@@ -252,7 +264,7 @@ export class EmployeeService {
       );
   }
 
-  // Upload employee image
+  // Upload employee image - updated with better error handling
   uploadEmployeeImage(employeeId: number, imageFile: File): Observable<string> {
     const headers = this.getAuthHeaders();
     const formData = new FormData();
@@ -260,6 +272,7 @@ export class EmployeeService {
     
     return this.http.post<any>(`${this.apiUrl}/employees/${employeeId}/upload-image`, formData, { headers })
       .pipe(
+        tap(response => console.log('Image upload response:', response)),
         map(response => {
           if (response && response.status === 'success' && response.image_url) {
             return response.image_url;
@@ -273,7 +286,7 @@ export class EmployeeService {
       );
   }
 
-  // Helper method to add employee with image
+  // Helper method to add employee with image - completely rewritten
   private addEmployeeWithImage(employee: Employee): Observable<Employee> {
     // First create the employee without the image
     const employeeData = { ...employee };
@@ -281,35 +294,44 @@ export class EmployeeService {
     employeeData.imageUrl = ''; // Remove the base64 image
     
     const headers = this.getAuthHeaders();
+    
+    console.log('Creating employee without image first:', employeeData);
+    
     return this.http.post<any>(`${this.apiUrl}/employees`, employeeData, { headers })
       .pipe(
-        map(response => {
+        tap(response => console.log('Create employee response:', response)),
+        switchMap(response => {
           if (response && response.status === 'success' && response.employee) {
             const newEmployee = response.employee;
             
             // Then upload the image if we have one
             if (imageUrl && imageUrl.startsWith('data:image')) {
+              console.log('Uploading image for employee ID:', newEmployee.id);
+              
               // Convert base64 to blob
               const imageBlob = this.dataURItoBlob(imageUrl);
               const imageFile = new File([imageBlob], 'profile.jpg', { type: 'image/jpeg' });
               
-              // Upload the image
-              this.uploadEmployeeImage(newEmployee.id, imageFile).subscribe(
-                url => {
-                  if (url) {
-                    newEmployee.imageUrl = url;
+              // Upload the image and wait for it to complete
+              return this.uploadEmployeeImage(newEmployee.id, imageFile).pipe(
+                tap(uploadedUrl => console.log('Image uploaded, URL:', uploadedUrl)),
+                switchMap(uploadedUrl => {
+                  if (uploadedUrl) {
+                    // After image upload, fetch the complete employee again to ensure we have updated data
+                    return this.getEmployeeById(newEmployee.id);
                   }
-                }
+                  return of(newEmployee);
+                })
               );
             }
             
-            return newEmployee;
+            return of(newEmployee);
           }
           
           // Fallback to mock behavior
           employee.id = this.employees.length + 1;
           this.employees.push(employee);
-          return employee;
+          return of(employee);
         }),
         catchError(error => {
           console.error('Error adding employee with image:', error);
@@ -321,7 +343,7 @@ export class EmployeeService {
       );
   }
 
-  // Helper method to update employee with image
+  // Helper method to update employee with image - completely rewritten
   private updateEmployeeWithImage(employee: Employee): Observable<Employee> {
     // First update the employee without the image
     const employeeData = { ...employee };
@@ -329,29 +351,38 @@ export class EmployeeService {
     employeeData.imageUrl = ''; // Remove the base64 image
     
     const headers = this.getAuthHeaders();
+    
+    console.log('Updating employee without image first:', employeeData);
+    
     return this.http.put<any>(`${this.apiUrl}/employees/${employee.id}`, employeeData, { headers })
       .pipe(
-        map(response => {
+        tap(response => console.log('Update employee response:', response)),
+        switchMap(response => {
           if (response && response.status === 'success' && response.employee) {
             const updatedEmployee = response.employee;
             
             // Then upload the image if we have one
             if (imageUrl && imageUrl.startsWith('data:image')) {
+              console.log('Uploading new image for employee ID:', updatedEmployee.id);
+              
               // Convert base64 to blob
               const imageBlob = this.dataURItoBlob(imageUrl);
               const imageFile = new File([imageBlob], 'profile.jpg', { type: 'image/jpeg' });
               
-              // Upload the image
-              this.uploadEmployeeImage(updatedEmployee.id, imageFile).subscribe(
-                url => {
-                  if (url) {
-                    updatedEmployee.imageUrl = url;
+              // Upload the image and wait for it to complete
+              return this.uploadEmployeeImage(updatedEmployee.id, imageFile).pipe(
+                tap(uploadedUrl => console.log('Image uploaded, URL:', uploadedUrl)),
+                switchMap(uploadedUrl => {
+                  if (uploadedUrl) {
+                    // After image upload, fetch the complete employee again to ensure we have updated data
+                    return this.getEmployeeById(updatedEmployee.id);
                   }
-                }
+                  return of(updatedEmployee);
+                })
               );
             }
             
-            return updatedEmployee;
+            return of(updatedEmployee);
           }
           
           // Fallback to mock behavior
@@ -359,7 +390,7 @@ export class EmployeeService {
           if (index !== -1) {
             this.employees[index] = employee;
           }
-          return employee;
+          return of(employee);
         }),
         catchError(error => {
           console.error('Error updating employee with image:', error);

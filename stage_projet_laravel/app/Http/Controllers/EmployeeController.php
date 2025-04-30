@@ -249,6 +249,7 @@ class EmployeeController extends Controller
      * Upload employee profile image
      * 
      * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function uploadImage(Request $request, $id)
@@ -278,14 +279,18 @@ class EmployeeController extends Controller
         if ($request->hasFile('image')) {
             // Create directory if it doesn't exist
             $employeeImagesPath = 'public/employees/images';
+            if (!Storage::exists($employeeImagesPath)) {
+                Storage::makeDirectory($employeeImagesPath);
+            }
             
             // Delete old image if exists
             if ($employee->image_url && Storage::exists(str_replace('/storage/', 'public/', $employee->image_url))) {
                 Storage::delete(str_replace('/storage/', 'public/', $employee->image_url));
             }
             
-            // Store the new image
-            $imagePath = $request->file('image')->store($employeeImagesPath);
+            // Store the new image with a unique filename
+            $filename = 'employee_' . $employee->id . '_' . time() . '.' . $request->file('image')->getClientOriginalExtension();
+            $imagePath = $request->file('image')->storeAs($employeeImagesPath, $filename);
             $imageUrl = Storage::url($imagePath);
             
             // Update employee record with new image URL

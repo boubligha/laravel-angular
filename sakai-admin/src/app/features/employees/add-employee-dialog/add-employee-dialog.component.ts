@@ -68,6 +68,7 @@ export class AddEmployeeDialogComponent implements OnInit {
     
     if (data?.employee) {
       this.employeeForm.patchValue(data.employee);
+      
       // Make sure daysOff exists on the employee object
       if (data.employee.daysOff !== undefined) {
         this.selectedDaysOff = data.employee.daysOff;
@@ -90,9 +91,11 @@ export class AddEmployeeDialogComponent implements OnInit {
       'Authorization': `Bearer ${token}`
     };
     
+    console.log('Fetching users...');
     this.http.get<any>(`${environment.apiUrl}/users`, { headers })
       .subscribe(
         response => {
+          console.log('Users response:', response);
           if (response && Array.isArray(response)) {
             this.users = response;
           } else {
@@ -146,7 +149,7 @@ export class AddEmployeeDialogComponent implements OnInit {
     if (this.employeeForm.valid) {
       const formData = this.employeeForm.value;
       
-      // Convert days off to JSON string if it's an array
+      // Convert days off to array
       if (Array.isArray(this.selectedDaysOff)) {
         formData.days_off = this.selectedDaysOff;
       }
@@ -156,7 +159,7 @@ export class AddEmployeeDialogComponent implements OnInit {
         formData.imageUrl = this.previewImageUrl;
       }
       
-      // Map selected user's email to formData.email if user_id is selected
+      // Map selected user's email and name to formData if user_id is selected
       if (formData.user_id) {
         const selectedUser = this.users.find(user => user.id === formData.user_id);
         if (selectedUser) {
@@ -164,6 +167,8 @@ export class AddEmployeeDialogComponent implements OnInit {
           formData.name = selectedUser.name;
         }
       }
+      
+      console.log('Submitting employee form data:', formData);
       
       this.dialogRef.close(formData);
     }

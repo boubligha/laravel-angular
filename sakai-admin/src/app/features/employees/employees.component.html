@@ -21,7 +21,7 @@
       <div class="employee-card">
         <div class="employee-header">
           <div class="employee-image" [class.online]="employee.status === 'online'">
-            <img [src]="employee.imageUrl || 'https://randomuser.me/api/portraits/' + (employee.id % 2 === 0 ? 'men' : 'women') + '/' + (employee.id * 3) + '.jpg'" [alt]="employee.name">
+            <img [src]="employee.imageUrl || 'assets/images/avatars/default-profile.jpg'" [alt]="employee.name">
           </div>
           <div class="employee-info">
             <h3>{{ employee.name }}</h3>
